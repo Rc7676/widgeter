@@ -33,6 +33,26 @@
     <string name="cd_remove">Remove</string>
     <string name="cd_delete">Delete task</string>
 
+    <!-- Shortcuts -->
+    <string name="sc_task_short">New task</string>
+    <string name="sc_task_long">Add a to-do task</string>
+    <string name="sc_note_short">Edit note</string>
+    <string name="sc_note_long">Edit your note</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_theme">Appearance</string>
+    <string name="theme_system">Follow system</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_about">About</string>
+    <string name="settings_about_body">Widgeter keeps everything on your device — no accounts, no internet, no tracking. On Android 12+ it adapts to your wallpaper colors automatically.</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">Welcome to Widgeter 👋</string>
+    <string name="onboarding_body">You get four home-screen widgets:\n\n⏰  Clock — time, date &amp; a greeting\n📝  Note — a quick note you can edit\n🔢  Counter — tap + and − to count anything\n✅  To-do — a checklist you tick off\n\nTo add one: long-press your home screen → Widgets → Widgeter.</string>
+    <string name="onboarding_got_it">Got it</string>
+
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>
     <string name="widget_desc_notes">A quick note on your home screen</string>

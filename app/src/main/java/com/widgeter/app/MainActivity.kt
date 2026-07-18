@@ -1,11 +1,14 @@
 package com.widgeter.app
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -27,10 +30,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: TodoAdapter
 
     private lateinit var noteInput: TextInputEditText
+    private lateinit var taskInput: TextInputEditText
     private lateinit var counterValue: TextView
     private lateinit var todoEmpty: TextView
     private lateinit var todoProgress: TextView
     private var noteInitialised = false
+
+    companion object {
+        const val ACTION_NEW_TASK = "com.widgeter.app.action.NEW_TASK"
+        const val ACTION_NEW_NOTE = "com.widgeter.app.action.NEW_NOTE"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -38,11 +47,58 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         applyInsets()
 
+        setupToolbar()
         bindViews()
         setupNote()
         setupCounter()
         setupTodos()
         observeState()
+        maybeShowOnboarding()
+        handleShortcut(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleShortcut(intent)
+    }
+
+    private fun setupToolbar() {
+        findViewById<MaterialToolbar>(R.id.toolbar).apply {
+            inflateMenu(R.menu.main_menu)
+            setOnMenuItemClickListener { item ->
+                if (item.itemId == R.id.action_settings) {
+                    startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+                    true
+                } else false
+            }
+        }
+    }
+
+    private fun maybeShowOnboarding() {
+        if (Store.isOnboarded(this)) return
+        Store.setOnboarded(this)
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.onboarding_title)
+            .setMessage(R.string.onboarding_body)
+            .setPositiveButton(R.string.onboarding_got_it, null)
+            .show()
+    }
+
+    private fun handleShortcut(intent: Intent?) {
+        when (intent?.action) {
+            ACTION_NEW_NOTE -> focusAndOpenKeyboard(noteInput)
+            ACTION_NEW_TASK -> focusAndOpenKeyboard(taskInput)
+        }
+    }
+
+    private fun focusAndOpenKeyboard(view: View) {
+        view.post {
+            view.requestFocus()
+            val imm = getSystemService(INPUT_METHOD_SERVICE)
+                    as? android.view.inputmethod.InputMethodManager
+            imm?.showSoftInput(view, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+        }
     }
 
     private fun applyInsets() {
@@ -58,6 +114,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun bindViews() {
         noteInput = findViewById(R.id.note_input)
+        taskInput = findViewById(R.id.task_input)
         counterValue = findViewById(R.id.counter_value)
         todoEmpty = findViewById(R.id.todo_empty)
         todoProgress = findViewById(R.id.todo_progress)
@@ -110,7 +167,6 @@ class MainActivity : AppCompatActivity() {
             }
         }).attachToRecyclerView(list)
 
-        val taskInput = findViewById<TextInputEditText>(R.id.task_input)
         findViewById<MaterialButton>(R.id.btn_add_task).setOnClickListener {
             val text = taskInput.text?.toString().orEmpty()
             if (text.isNotBlank()) {

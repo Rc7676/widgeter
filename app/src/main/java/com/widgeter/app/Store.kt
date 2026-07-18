@@ -19,6 +19,8 @@ object Store {
     private const val KEY_COUNTER = "counter_value"
     private const val KEY_TODO = "todo_json"
     private const val KEY_SEQ = "todo_seq"
+    private const val KEY_THEME = "theme_mode"
+    private const val KEY_ONBOARDED = "onboarded"
 
     fun prefs(c: Context) = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
@@ -31,6 +33,15 @@ object Store {
             .putLong(KEY_NOTE_TIME, System.currentTimeMillis())
             .apply()
     }
+
+    // ---- Preferences ----
+    /** AppCompatDelegate night mode: -1 follow system, 1 light, 2 dark. */
+    fun getThemeMode(c: Context): Int = prefs(c).getInt(KEY_THEME, -1)
+    fun setThemeMode(c: Context, mode: Int) =
+        prefs(c).edit().putInt(KEY_THEME, mode).apply()
+
+    fun isOnboarded(c: Context): Boolean = prefs(c).getBoolean(KEY_ONBOARDED, false)
+    fun setOnboarded(c: Context) = prefs(c).edit().putBoolean(KEY_ONBOARDED, true).apply()
 
     // ---- Counter ----
     fun getCounter(c: Context): Int = prefs(c).getInt(KEY_COUNTER, 0)

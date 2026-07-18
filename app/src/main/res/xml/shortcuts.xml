@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:shortcutId="new_task"
+        android:enabled="true"
+        android:icon="@drawable/ic_checklist"
+        android:shortcutShortLabel="@string/sc_task_short"
+        android:shortcutLongLabel="@string/sc_task_long">
+        <intent
+            android:action="com.widgeter.app.action.NEW_TASK"
+            android:targetPackage="com.widgeter.app"
+            android:targetClass="com.widgeter.app.MainActivity" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="new_note"
+        android:enabled="true"
+        android:icon="@drawable/ic_note"
+        android:shortcutShortLabel="@string/sc_note_short"
+        android:shortcutLongLabel="@string/sc_note_long">
+        <intent
+            android:action="com.widgeter.app.action.NEW_NOTE"
+            android:targetPackage="com.widgeter.app"
+            android:targetClass="com.widgeter.app.MainActivity" />
+    </shortcut>
+
+</shortcuts>
