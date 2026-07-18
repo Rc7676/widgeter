@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:minHeight="52dp"
-    android:paddingVertical="2dp">
+    android:minHeight="56dp">
+
+    <View
+        android:id="@+id/item_priority"
+        android:layout_width="4dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/prio_none" />
 
     <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/item_check"
@@ -16,20 +21,42 @@
         android:clickable="false"
         android:focusable="false" />
 
-    <TextView
-        android:id="@+id/item_text"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginStart="4dp"
-        android:text="Task"
-        android:textColor="?attr/colorOnSurface"
-        android:textSize="16sp" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Task"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/item_meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/item_drag"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_drag"
+        android:contentDescription="@string/cd_drag" />
 
     <ImageButton
         android:id="@+id/item_delete"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_delete"
         android:tint="?attr/colorOnSurfaceVariant"

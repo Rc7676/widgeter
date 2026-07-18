@@ -23,6 +23,12 @@
     <color name="widget_accent_container">#EADDFF</color>
     <color name="widget_on_accent_container">#21005D</color>
 
+    <!-- Priority (apply in both light and dark) -->
+    <color name="prio_none">#00000000</color>
+    <color name="prio_low">#43A047</color>
+    <color name="prio_med">#FB8C00</color>
+    <color name="prio_high">#E53935</color>
+
     <!-- Launcher icon background (no night override) -->
     <color name="ic_launcher_background">#6750A4</color>
 </resources>

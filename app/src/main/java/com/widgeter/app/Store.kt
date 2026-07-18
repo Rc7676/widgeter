@@ -9,7 +9,13 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /** A single to-do entry with a stable id (so toggles never hit the wrong row). */
-data class TodoItem(val id: Long, val text: String, val done: Boolean)
+data class TodoItem(
+    val id: Long,
+    val text: String,
+    val done: Boolean,
+    val priority: Int = 0,   // 0 none, 1 low, 2 medium, 3 high
+    val due: Long = 0L       // epoch millis; 0 = no due date
+)
 
 /** Low-level persistent state for the app + widgets, backed by SharedPreferences. */
 object Store {
@@ -141,7 +147,13 @@ object Store {
                     id = seq++
                     needsMigration = true
                 }
-                TodoItem(id, o.getString("t"), o.optBoolean("d", false))
+                TodoItem(
+                    id = id,
+                    text = o.getString("t"),
+                    done = o.optBoolean("d", false),
+                    priority = o.optInt("p", 0),
+                    due = o.optLong("due", 0L)
+                )
             }
             if (needsMigration) {
                 prefs(c).edit().putLong(KEY_SEQ, seq).apply()
@@ -161,6 +173,8 @@ object Store {
                     .put("id", item.id)
                     .put("t", item.text)
                     .put("d", item.done)
+                    .put("p", item.priority)
+                    .put("due", item.due)
             )
         }
         prefs(c).edit().putString(KEY_TODO, arr.toString()).apply()

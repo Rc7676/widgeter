@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
@@ -28,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var adapter: TodoAdapter
+    private lateinit var itemTouchHelper: ItemTouchHelper
 
     private lateinit var noteInput: TextInputEditText
     private lateinit var taskInput: TextInputEditText
@@ -145,19 +148,27 @@ class MainActivity : AppCompatActivity() {
     private fun setupTodos() {
         adapter = TodoAdapter(
             onToggle = { viewModel.toggleTodo(it.id) },
-            onDelete = { removeWithUndo(it) }
+            onDelete = { removeWithUndo(it) },
+            onEdit = { showEditDialog(it) },
+            onStartDrag = { vh -> itemTouchHelper.startDrag(vh) }
         )
         val list = findViewById<RecyclerView>(R.id.todo_recycler)
         list.layoutManager = LinearLayoutManager(this)
         list.adapter = adapter
         list.isNestedScrollingEnabled = false
 
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
-            0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        val callback = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         ) {
+            override fun isLongPressDragEnabled() = false
+
             override fun onMove(
                 r: RecyclerView, v: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder
-            ) = false
+            ): Boolean {
+                adapter.onItemMove(v.bindingAdapterPosition, t.bindingAdapterPosition)
+                return true
+            }
 
             override fun onSwiped(vh: RecyclerView.ViewHolder, direction: Int) {
                 val pos = vh.bindingAdapterPosition
@@ -165,7 +176,14 @@ class MainActivity : AppCompatActivity() {
                     removeWithUndo(adapter.itemAt(pos))
                 }
             }
-        }).attachToRecyclerView(list)
+
+            override fun clearView(r: RecyclerView, vh: RecyclerView.ViewHolder) {
+                super.clearView(r, vh)
+                viewModel.reorder(adapter.currentIds())
+            }
+        }
+        itemTouchHelper = ItemTouchHelper(callback)
+        itemTouchHelper.attachToRecyclerView(list)
 
         findViewById<MaterialButton>(R.id.btn_add_task).setOnClickListener {
             val text = taskInput.text?.toString().orEmpty()
@@ -177,13 +195,81 @@ class MainActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.btn_clear_completed).setOnClickListener {
             viewModel.clearCompleted()
         }
+        findViewById<MaterialButton>(R.id.btn_sort_todos).setOnClickListener {
+            viewModel.sortTodos()
+        }
     }
 
     private fun removeWithUndo(item: TodoItem) {
-        val index = adapter.currentList.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
+        val index = adapter.currentIds().indexOf(item.id).coerceAtLeast(0)
         viewModel.deleteTodo(item.id)
         Snackbar.make(findViewById(R.id.root), R.string.task_deleted, Snackbar.LENGTH_LONG)
             .setAction(R.string.undo) { viewModel.restoreTodo(item, index) }
+            .show()
+    }
+
+    private fun showEditDialog(item: TodoItem) {
+        val view = layoutInflater.inflate(R.layout.dialog_edit_todo, null)
+        val name = view.findViewById<TextInputEditText>(R.id.edit_name)
+        val group = view.findViewById<MaterialButtonToggleGroup>(R.id.priority_group)
+        val dueLabel = view.findViewById<TextView>(R.id.due_label)
+        val btnDue = view.findViewById<MaterialButton>(R.id.btn_due)
+        val btnClear = view.findViewById<MaterialButton>(R.id.btn_due_clear)
+
+        name.setText(item.text)
+        group.check(
+            when (item.priority) {
+                1 -> R.id.prio_low
+                2 -> R.id.prio_med
+                3 -> R.id.prio_high
+                else -> R.id.prio_none
+            }
+        )
+
+        var due = item.due
+        fun refreshDue() {
+            if (due > 0) {
+                dueLabel.text = android.text.format.DateUtils.formatDateTime(
+                    this, due,
+                    android.text.format.DateUtils.FORMAT_SHOW_DATE or
+                        android.text.format.DateUtils.FORMAT_ABBREV_MONTH
+                )
+                btnClear.visibility = View.VISIBLE
+            } else {
+                dueLabel.text = ""
+                btnClear.visibility = View.GONE
+            }
+        }
+        refreshDue()
+
+        btnDue.setOnClickListener {
+            val picker = MaterialDatePicker.Builder.datePicker()
+                .setSelection(if (due > 0) due else MaterialDatePicker.todayInUtcMilliseconds())
+                .build()
+            picker.addOnPositiveButtonClickListener { selection ->
+                due = selection
+                refreshDue()
+            }
+            picker.show(supportFragmentManager, "due_picker")
+        }
+        btnClear.setOnClickListener {
+            due = 0L
+            refreshDue()
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.edit_title)
+            .setView(view)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.save_generic) { _, _ ->
+                val priority = when (group.checkedButtonId) {
+                    R.id.prio_low -> 1
+                    R.id.prio_med -> 2
+                    R.id.prio_high -> 3
+                    else -> 0
+                }
+                viewModel.updateTodo(item.id, name.text?.toString().orEmpty(), priority, due)
+            }
             .show()
     }
 
@@ -202,7 +288,7 @@ class MainActivity : AppCompatActivity() {
         }
         counterValue.text = state.counter.toString()
 
-        adapter.submitList(state.todos.toList())
+        adapter.submit(state.todos.toList())
         val hasTasks = state.todos.isNotEmpty()
         todoEmpty.visibility = if (hasTasks) View.GONE else View.VISIBLE
         findViewById<View>(R.id.todo_recycler).visibility =

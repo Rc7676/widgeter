@@ -53,6 +53,23 @@
     <string name="onboarding_body">You get four home-screen widgets:\n\n⏰  Clock — time, date &amp; a greeting\n📝  Note — a quick note you can edit\n🔢  Counter — tap + and − to count anything\n✅  To-do — a checklist you tick off\n\nTo add one: long-press your home screen → Widgets → Widgeter.</string>
     <string name="onboarding_got_it">Got it</string>
 
+    <!-- To-do editing -->
+    <string name="cd_drag">Reorder</string>
+    <string name="edit_title">Edit task</string>
+    <string name="edit_task_hint">Task</string>
+    <string name="edit_priority">Priority</string>
+    <string name="prio_none">None</string>
+    <string name="prio_low">Low</string>
+    <string name="prio_med">Med</string>
+    <string name="prio_high">High</string>
+    <string name="edit_set_due">Due date</string>
+    <string name="edit_clear">Clear</string>
+    <string name="sort">Sort</string>
+    <string name="save_generic">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="due_today">Today</string>
+    <string name="due_tomorrow">Tomorrow</string>
+
     <!-- Widget configuration -->
     <string name="cfg_counter_title">Counter widget</string>
     <string name="cfg_note_title">Note widget</string>

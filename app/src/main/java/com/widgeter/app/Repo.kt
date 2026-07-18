@@ -76,6 +76,40 @@ object Repo {
         Widgets.refreshAll(appContext)
     }
 
+    fun updateTodo(id: Long, text: String, priority: Int, due: Long) {
+        val items = Store.getTodos(appContext)
+        val idx = items.indexOfFirst { it.id == id }
+        if (idx >= 0) {
+            val trimmed = text.trim().ifEmpty { items[idx].text }
+            items[idx] = items[idx].copy(text = trimmed, priority = priority, due = due)
+            Store.saveTodos(appContext, items)
+            Widgets.refreshAll(appContext)
+        }
+    }
+
+    /** Reorders the stored list to match the given id order (from drag & drop). */
+    fun reorder(orderedIds: List<Long>) {
+        val items = Store.getTodos(appContext)
+        val byId = items.associateBy { it.id }
+        val reordered = orderedIds.mapNotNull { byId[it] }
+        if (reordered.size == items.size) {
+            Store.saveTodos(appContext, reordered)
+            Widgets.refreshAll(appContext)
+        }
+    }
+
+    /** Sorts: unfinished first, then higher priority, then earlier due date. */
+    fun sortTodos() {
+        val items = Store.getTodos(appContext)
+        val sorted = items.sortedWith(
+            compareBy<TodoItem> { it.done }
+                .thenByDescending { it.priority }
+                .thenBy { if (it.due == 0L) Long.MAX_VALUE else it.due }
+        )
+        Store.saveTodos(appContext, sorted)
+        Widgets.refreshAll(appContext)
+    }
+
     fun toggleTodo(id: Long) {
         val items = Store.getTodos(appContext)
         val idx = items.indexOfFirst { it.id == id }

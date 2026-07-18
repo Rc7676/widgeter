@@ -16,6 +16,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun adjustCounter(delta: Int) = Repo.adjustCounter(delta)
     fun resetCounter() = Repo.resetCounter()
     fun addTodo(text: String) = Repo.addTodo(text)
+    fun updateTodo(id: Long, text: String, priority: Int, due: Long) =
+        Repo.updateTodo(id, text, priority, due)
+    fun reorder(orderedIds: List<Long>) = Repo.reorder(orderedIds)
+    fun sortTodos() = Repo.sortTodos()
     fun toggleTodo(id: Long) = Repo.toggleTodo(id)
     fun deleteTodo(id: Long) = Repo.deleteTodo(id)
     fun restoreTodo(item: TodoItem, index: Int) = Repo.restoreTodo(item, index)
