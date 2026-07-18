@@ -82,9 +82,26 @@
     <string name="cfg_add">Add widget</string>
     <string name="cfg_save_changes">Save</string>
 
+    <!-- New widgets -->
+    <string name="habit_title">Habit</string>
+    <string name="habit_done">checked in today ✓</string>
+    <string name="habit_todo">day streak · tap ✓</string>
+    <string name="water_title">Water</string>
+    <string name="countdown_title">Countdown</string>
+    <string name="countdown_until">days until</string>
+    <string name="countdown_ago">days ago</string>
+    <string name="countdown_today">Today!</string>
+    <string name="countdown_set">tap to set a date</string>
+    <string name="cfg_countdown_title">Countdown widget</string>
+    <string name="cfg_countdown_name_hint">e.g. Vacation, Birthday, Launch</string>
+    <string name="cfg_pick_date">Pick date</string>
+
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>
     <string name="widget_desc_notes">A quick note on your home screen</string>
     <string name="widget_desc_counter">Tap counter with + and − buttons</string>
     <string name="widget_desc_todo">A checklist you can tick off</string>
+    <string name="widget_desc_habit">Daily check-in with a streak</string>
+    <string name="widget_desc_water">Track glasses of water each day</string>
+    <string name="widget_desc_countdown">Days until a date you choose</string>
 </resources>

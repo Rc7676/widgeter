@@ -96,6 +96,52 @@
                 android:resource="@xml/todo_widget_info" />
         </receiver>
 
+        <!-- Habit / streak widget -->
+        <receiver
+            android:name=".HabitWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/habit_widget_info" />
+        </receiver>
+
+        <!-- Water tracker widget -->
+        <receiver
+            android:name=".WaterWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/water_widget_info" />
+        </receiver>
+
+        <!-- Countdown widget -->
+        <receiver
+            android:name=".CountdownWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/countdown_widget_info" />
+        </receiver>
+
+        <activity
+            android:name=".CountdownConfigActivity"
+            android:exported="true"
+            android:label="@string/cfg_countdown_title"
+            android:theme="@style/Theme.Widgeter">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
         <service
             android:name=".TodoWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"

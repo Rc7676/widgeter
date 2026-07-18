@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import org.json.JSONArray
 import org.json.JSONObject
+import java.time.LocalDate
 
 /** A single to-do entry with a stable id (so toggles never hit the wrong row). */
 data class TodoItem(
@@ -125,6 +126,59 @@ object Store {
     fun deleteNote(c: Context, id: Int) {
         prefs(c).edit().remove("note_txt_$id").remove("note_time_$id").remove("note_lbl_$id").apply()
     }
+
+    private fun today(): Long = LocalDate.now().toEpochDay()
+
+    // ---- Habit / streak (single shared habit) ----
+    fun getHabitLast(c: Context): Long = prefs(c).getLong("habit_last", 0L)
+
+    fun habitDoneToday(c: Context): Boolean = getHabitLast(c) == today()
+
+    /** Streak that is still "alive" (counts only if done today or yesterday). */
+    fun habitStreak(c: Context): Int {
+        val last = getHabitLast(c)
+        val t = today()
+        val stored = prefs(c).getInt("habit_streak", 0)
+        return if (last == t || last == t - 1) stored else 0
+    }
+
+    fun checkInHabit(c: Context) {
+        val t = today()
+        val last = getHabitLast(c)
+        if (last == t) return
+        val newStreak = if (last == t - 1) prefs(c).getInt("habit_streak", 0) + 1 else 1
+        prefs(c).edit().putInt("habit_streak", newStreak).putLong("habit_last", t).apply()
+    }
+
+    // ---- Water (resets each day) ----
+    fun getWaterGoal(c: Context): Int = prefs(c).getInt("water_goal", 8)
+
+    fun getWaterCount(c: Context): Int =
+        if (prefs(c).getLong("water_day", 0L) == today()) prefs(c).getInt("water_count", 0) else 0
+
+    fun addWater(c: Context, delta: Int) {
+        val next = (getWaterCount(c) + delta).coerceIn(0, 99)
+        prefs(c).edit().putInt("water_count", next).putLong("water_day", today()).apply()
+    }
+
+    // ---- Countdown (per widget instance) ----
+    fun getCountdownTitle(c: Context, id: Int): String =
+        prefs(c).getString("cd_title_$id", "Countdown") ?: "Countdown"
+
+    fun setCountdownTitle(c: Context, id: Int, title: String) =
+        prefs(c).edit().putString("cd_title_$id", title).apply()
+
+    /** Target date as epoch-day; 0 = not set. */
+    fun getCountdownDate(c: Context, id: Int): Long = prefs(c).getLong("cd_date_$id", 0L)
+
+    fun setCountdownDate(c: Context, id: Int, epochDay: Long) =
+        prefs(c).edit().putLong("cd_date_$id", epochDay).apply()
+
+    fun deleteCountdown(c: Context, id: Int) {
+        prefs(c).edit().remove("cd_title_$id").remove("cd_date_$id").apply()
+    }
+
+    fun todayEpochDay(): Long = today()
 
     // ---- Ids ----
     fun nextId(c: Context): Long {
