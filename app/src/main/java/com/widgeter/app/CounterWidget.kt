@@ -3,12 +3,11 @@ package com.widgeter.app
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 
-/** A number with + and − buttons that live right on the home screen. */
+/** A named counter with + and − buttons; each widget instance is independent. */
 class CounterWidget : AppWidgetProvider() {
 
     companion object {
@@ -24,30 +23,51 @@ class CounterWidget : AppWidgetProvider() {
         for (id in appWidgetIds) render(context, appWidgetManager, id)
     }
 
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        for (id in appWidgetIds) Store.deleteCounter(context, id)
+    }
+
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        when (intent.action) {
-            ACTION_INC -> Store.setCounter(context, Store.getCounter(context) + 1)
-            ACTION_DEC -> Store.setCounter(context, Store.getCounter(context) - 1)
-            else -> return
-        }
-        val mgr = AppWidgetManager.getInstance(context)
-        val ids = mgr.getAppWidgetIds(ComponentName(context, CounterWidget::class.java))
-        for (id in ids) render(context, mgr, id)
+        val action = intent.action
+        if (action != ACTION_INC && action != ACTION_DEC) return
+        val id = intent.getIntExtra(
+            AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID
+        )
+        if (id == AppWidgetManager.INVALID_APPWIDGET_ID) return
+        val step = Store.getCounterStep(context, id)
+        val delta = if (action == ACTION_INC) step else -step
+        Store.setCounterValue(context, id, Store.getCounterValue(context, id) + delta)
+        render(context, AppWidgetManager.getInstance(context), id)
     }
 
     private fun render(context: Context, mgr: AppWidgetManager, id: Int) {
         val views = RemoteViews(context.packageName, R.layout.counter_widget)
-        views.setTextViewText(R.id.counter_value, Store.getCounter(context).toString())
-        views.setOnClickPendingIntent(R.id.counter_plus, buttonIntent(context, ACTION_INC, 1))
-        views.setOnClickPendingIntent(R.id.counter_minus, buttonIntent(context, ACTION_DEC, 2))
+        views.setTextViewText(R.id.counter_label, Store.getCounterLabel(context, id))
+        views.setTextViewText(R.id.counter_value, Store.getCounterValue(context, id).toString())
+        views.setOnClickPendingIntent(R.id.counter_plus, buttonIntent(context, ACTION_INC, id))
+        views.setOnClickPendingIntent(R.id.counter_minus, buttonIntent(context, ACTION_DEC, id))
+        views.setOnClickPendingIntent(R.id.counter_label, editIntent(context, id))
         mgr.updateAppWidget(id, views)
     }
 
-    private fun buttonIntent(context: Context, action: String, requestCode: Int): PendingIntent {
-        val intent = Intent(context, CounterWidget::class.java).setAction(action)
+    private fun buttonIntent(context: Context, action: String, id: Int): PendingIntent {
+        val intent = Intent(context, CounterWidget::class.java)
+            .setAction(action)
+            .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
+        val requestCode = id * 2 + if (action == ACTION_INC) 0 else 1
         return PendingIntent.getBroadcast(
             context, requestCode, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+    private fun editIntent(context: Context, id: Int): PendingIntent {
+        val intent = Intent(context, CounterConfigActivity::class.java)
+            .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        return PendingIntent.getActivity(
+            context, id * 2 + 90000, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
     }

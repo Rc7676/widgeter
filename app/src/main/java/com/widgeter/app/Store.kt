@@ -43,10 +43,82 @@ object Store {
     fun isOnboarded(c: Context): Boolean = prefs(c).getBoolean(KEY_ONBOARDED, false)
     fun setOnboarded(c: Context) = prefs(c).edit().putBoolean(KEY_ONBOARDED, true).apply()
 
-    // ---- Counter ----
+    // ---- Counter (legacy global, = the app's "primary" counter) ----
     fun getCounter(c: Context): Int = prefs(c).getInt(KEY_COUNTER, 0)
     fun setCounter(c: Context, value: Int) =
         prefs(c).edit().putInt(KEY_COUNTER, value).apply()
+
+    /**
+     * Per-widget-instance data. DEFAULT_ID (0) maps to the legacy global note/
+     * counter that the in-app screen edits; real widget ids (>=1) get their own
+     * independent data, falling back to the global value on first read so
+     * widgets placed before configuration existed keep working.
+     */
+    const val DEFAULT_ID = 0
+
+    fun getCounterValue(c: Context, id: Int): Int {
+        if (id == DEFAULT_ID) return getCounter(c)
+        val p = prefs(c)
+        val key = "cnt_val_$id"
+        return if (p.contains(key)) p.getInt(key, 0) else getCounter(c)
+    }
+
+    fun setCounterValue(c: Context, id: Int, value: Int) {
+        if (id == DEFAULT_ID) setCounter(c, value)
+        else prefs(c).edit().putInt("cnt_val_$id", value).apply()
+    }
+
+    fun getCounterLabel(c: Context, id: Int): String =
+        if (id == DEFAULT_ID) "Counter"
+        else prefs(c).getString("cnt_lbl_$id", "Counter") ?: "Counter"
+
+    fun setCounterLabel(c: Context, id: Int, label: String) {
+        if (id != DEFAULT_ID) prefs(c).edit().putString("cnt_lbl_$id", label).apply()
+    }
+
+    fun getCounterStep(c: Context, id: Int): Int =
+        if (id == DEFAULT_ID) 1 else prefs(c).getInt("cnt_step_$id", 1)
+
+    fun setCounterStep(c: Context, id: Int, step: Int) {
+        if (id != DEFAULT_ID) prefs(c).edit().putInt("cnt_step_$id", step.coerceAtLeast(1)).apply()
+    }
+
+    fun deleteCounter(c: Context, id: Int) {
+        prefs(c).edit().remove("cnt_val_$id").remove("cnt_lbl_$id").remove("cnt_step_$id").apply()
+    }
+
+    fun getNoteText(c: Context, id: Int): String {
+        if (id == DEFAULT_ID) return getNote(c)
+        val p = prefs(c)
+        val key = "note_txt_$id"
+        return if (p.contains(key)) p.getString(key, "") ?: "" else getNote(c)
+    }
+
+    fun getNoteTimeFor(c: Context, id: Int): Long =
+        if (id == DEFAULT_ID) getNoteTime(c) else prefs(c).getLong("note_time_$id", 0L)
+
+    fun setNoteText(c: Context, id: Int, text: String) {
+        if (id == DEFAULT_ID) {
+            setNote(c, text)
+        } else {
+            prefs(c).edit()
+                .putString("note_txt_$id", text)
+                .putLong("note_time_$id", System.currentTimeMillis())
+                .apply()
+        }
+    }
+
+    fun getNoteLabel(c: Context, id: Int): String =
+        if (id == DEFAULT_ID) "Note"
+        else prefs(c).getString("note_lbl_$id", "Note") ?: "Note"
+
+    fun setNoteLabel(c: Context, id: Int, label: String) {
+        if (id != DEFAULT_ID) prefs(c).edit().putString("note_lbl_$id", label).apply()
+    }
+
+    fun deleteNote(c: Context, id: Int) {
+        prefs(c).edit().remove("note_txt_$id").remove("note_time_$id").remove("note_lbl_$id").apply()
+    }
 
     // ---- Ids ----
     fun nextId(c: Context): Long {

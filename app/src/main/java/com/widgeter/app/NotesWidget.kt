@@ -1,13 +1,15 @@
 package com.widgeter.app
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.content.Intent
 import android.text.format.DateUtils
 import android.view.View
 import android.widget.RemoteViews
 
-/** Shows the saved note plus when it was last edited; tap to edit. */
+/** A named note; each widget instance is independent. Tap to edit. */
 class NotesWidget : AppWidgetProvider() {
 
     override fun onUpdate(
@@ -15,29 +17,47 @@ class NotesWidget : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        for (id in appWidgetIds) {
-            val views = RemoteViews(context.packageName, R.layout.notes_widget)
-            val note = Store.getNote(context)
+        for (id in appWidgetIds) render(context, appWidgetManager, id)
+    }
+
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        for (id in appWidgetIds) Store.deleteNote(context, id)
+    }
+
+    private fun render(context: Context, mgr: AppWidgetManager, id: Int) {
+        val views = RemoteViews(context.packageName, R.layout.notes_widget)
+        views.setTextViewText(R.id.notes_label, Store.getNoteLabel(context, id))
+
+        val note = Store.getNoteText(context, id)
+        views.setTextViewText(
+            R.id.notes_text,
+            note.ifBlank { context.getString(R.string.notes_empty) }
+        )
+
+        val time = Store.getNoteTimeFor(context, id)
+        if (note.isNotBlank() && time > 0) {
+            views.setViewVisibility(R.id.notes_time, View.VISIBLE)
             views.setTextViewText(
-                R.id.notes_text,
-                note.ifBlank { context.getString(R.string.notes_empty) }
-            )
-
-            val time = Store.getNoteTime(context)
-            if (note.isNotBlank() && time > 0) {
-                views.setViewVisibility(R.id.notes_time, View.VISIBLE)
-                views.setTextViewText(
-                    R.id.notes_time,
-                    DateUtils.getRelativeTimeSpanString(
-                        time, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS
-                    )
+                R.id.notes_time,
+                DateUtils.getRelativeTimeSpanString(
+                    time, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS
                 )
-            } else {
-                views.setViewVisibility(R.id.notes_time, View.GONE)
-            }
-
-            views.setOnClickPendingIntent(R.id.notes_root, openAppPendingIntent(context))
-            appWidgetManager.updateAppWidget(id, views)
+            )
+        } else {
+            views.setViewVisibility(R.id.notes_time, View.GONE)
         }
+
+        views.setOnClickPendingIntent(R.id.notes_root, editIntent(context, id))
+        mgr.updateAppWidget(id, views)
+    }
+
+    private fun editIntent(context: Context, id: Int): PendingIntent {
+        val intent = Intent(context, NoteConfigActivity::class.java)
+            .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        return PendingIntent.getActivity(
+            context, id + 80000, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 }

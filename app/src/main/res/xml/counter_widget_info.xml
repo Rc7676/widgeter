@@ -7,6 +7,7 @@
     android:updatePeriodMillis="0"
     android:initialLayout="@layout/counter_widget"
     android:previewLayout="@layout/counter_widget"
+    android:configure="com.widgeter.app.CounterConfigActivity"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
     android:description="@string/widget_desc_counter" />

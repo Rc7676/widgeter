@@ -53,6 +53,18 @@
     <string name="onboarding_body">You get four home-screen widgets:\n\n⏰  Clock — time, date &amp; a greeting\n📝  Note — a quick note you can edit\n🔢  Counter — tap + and − to count anything\n✅  To-do — a checklist you tick off\n\nTo add one: long-press your home screen → Widgets → Widgeter.</string>
     <string name="onboarding_got_it">Got it</string>
 
+    <!-- Widget configuration -->
+    <string name="cfg_counter_title">Counter widget</string>
+    <string name="cfg_note_title">Note widget</string>
+    <string name="cfg_name">Name</string>
+    <string name="cfg_counter_name_hint">e.g. Coffees, Push-ups, Water</string>
+    <string name="cfg_note_name_hint">e.g. Shopping, Ideas</string>
+    <string name="cfg_start_value">Starting value</string>
+    <string name="cfg_step">Step (how much + and − change)</string>
+    <string name="cfg_note_text">Note text</string>
+    <string name="cfg_add">Add widget</string>
+    <string name="cfg_save_changes">Save</string>
+
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>
     <string name="widget_desc_notes">A quick note on your home screen</string>

@@ -28,6 +28,26 @@
             android:exported="false"
             android:parentActivityName=".MainActivity" />
 
+        <activity
+            android:name=".CounterConfigActivity"
+            android:exported="true"
+            android:label="@string/cfg_counter_title"
+            android:theme="@style/Theme.Widgeter">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".NoteConfigActivity"
+            android:exported="true"
+            android:label="@string/cfg_note_title"
+            android:theme="@style/Theme.Widgeter">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
         <!-- Clock / greeting widget -->
         <receiver
             android:name=".ClockWidget"

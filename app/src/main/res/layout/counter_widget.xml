@@ -6,14 +6,17 @@
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/counter_label"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/counter_title"
         android:textColor="@color/widget_accent"
         android:textSize="12sp"
         android:textStyle="bold"
         android:letterSpacing="0.10"
-        android:textAllCaps="true" />
+        android:textAllCaps="true"
+        android:maxLines="1"
+        android:ellipsize="end" />
 
     <LinearLayout
         android:layout_width="match_parent"
