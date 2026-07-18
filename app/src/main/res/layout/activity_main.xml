@@ -1,158 +1,241 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface"
-    android:fillViewport="true">
+    android:background="?android:attr/colorBackground">
 
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="@color/brand"
-            android:textSize="28sp"
-            android:textStyle="bold" />
-
-        <TextView
+        <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/widget_tip"
-            android:textColor="@color/muted"
-            android:textSize="13sp" />
+            app:title="@string/app_name"
+            app:subtitle="@string/app_tagline"
+            app:titleTextColor="?attr/colorOnSurface"
+            app:subtitleTextColor="?attr/colorOnSurfaceVariant" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <!-- NOTE SECTION -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/section_note"
-            android:textColor="@color/on_surface"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/edit_note"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/widget_bg"
-            android:gravity="top"
-            android:hint="@string/notes_empty"
-            android:inputType="textMultiLine"
-            android:minLines="3"
-            android:padding="14dp"
-            android:importantForAutofill="no" />
-
-        <Button
-            android:id="@+id/btn_save_note"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/save" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginVertical="20dp"
-            android:background="#22000000" />
-
-        <!-- COUNTER SECTION -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/section_counter"
-            android:textColor="@color/on_surface"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/content_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="4dp">
+
+            <!-- NOTE CARD -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Card">
+
+                <LinearLayout style="@style/CardInner">
+
+                    <LinearLayout style="@style/CardHeader">
+                        <ImageView style="@style/CardHeaderIcon"
+                            android:src="@drawable/ic_note" />
+                        <TextView style="@style/CardHeaderText"
+                            android:text="@string/section_note" />
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="@string/note_hint">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/note_input"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:inputType="textMultiLine|textCapSentences"
+                            android:minLines="3"
+                            android:maxLines="8"
+                            android:importantForAutofill="no" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_save_note"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/save"
+                        app:icon="@drawable/ic_check_on" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- COUNTER CARD -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Card">
+
+                <LinearLayout style="@style/CardInner">
+
+                    <LinearLayout style="@style/CardHeader">
+                        <ImageView style="@style/CardHeaderIcon"
+                            android:src="@drawable/ic_counter" />
+                        <TextView style="@style/CardHeaderText"
+                            android:text="@string/section_counter" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:id="@+id/counter_minus"
+                            style="@style/TonalIconButton"
+                            android:src="@drawable/ic_minus"
+                            android:contentDescription="@string/cd_remove" />
+
+                        <TextView
+                            android:id="@+id/counter_value"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="44sp"
+                            android:textStyle="bold" />
+
+                        <ImageButton
+                            android:id="@+id/counter_plus"
+                            style="@style/TonalIconButton"
+                            android:src="@drawable/ic_add"
+                            android:contentDescription="@string/cd_add" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/counter_caption"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="12sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_reset_counter"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="@string/reset" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- TO-DO CARD -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Card">
+
+                <LinearLayout style="@style/CardInner">
+
+                    <LinearLayout style="@style/CardHeader">
+                        <ImageView style="@style/CardHeaderIcon"
+                            android:src="@drawable/ic_checklist" />
+                        <TextView
+                            style="@style/CardHeaderText"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/section_todo" />
+                        <TextView
+                            android:id="@+id/todo_progress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="@string/add_task_hint">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/task_input"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="text|textCapSentences"
+                                android:maxLines="1"
+                                android:importantForAutofill="no" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_add_task"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/add"
+                            app:icon="@drawable/ic_add" />
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/todo_recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:overScrollMode="never" />
+
+                    <TextView
+                        android:id="@+id/todo_empty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:paddingVertical="16dp"
+                        android:text="@string/todo_list_empty"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="14sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_clear_completed"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="@string/clear_completed" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/counter_value_label"
-                android:textColor="@color/muted" />
+                android:layout_marginTop="4dp"
+                android:paddingHorizontal="8dp"
+                android:text="@string/widget_tip"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="12sp" />
 
-            <TextView
-                android:id="@+id/text_counter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textColor="@color/brand"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btn_reset_counter"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:text="@string/reset" />
         </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginVertical="20dp"
-            android:background="#22000000" />
-
-        <!-- TODO SECTION -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/section_todo"
-            android:textColor="@color/on_surface"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/edit_task"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/widget_bg"
-                android:hint="@string/add_task_hint"
-                android:inputType="text"
-                android:padding="14dp"
-                android:importantForAutofill="no" />
-
-            <Button
-                android:id="@+id/btn_add_task"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="@string/add" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/todo_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical" />
-
-    </LinearLayout>
-</ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

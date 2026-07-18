@@ -5,22 +5,25 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    android:paddingTop="9dp"
+    android:paddingBottom="9dp">
 
     <ImageView
         android:id="@+id/todo_row_check"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_check_off" />
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:src="@drawable/ic_check_off"
+        android:contentDescription="@null" />
 
     <TextView
         android:id="@+id/todo_row_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="12dp"
         android:text="Task"
-        android:textColor="@color/widget_text"
-        android:textSize="15sp" />
+        android:textColor="@color/widget_on_card"
+        android:textSize="15sp"
+        android:maxLines="2"
+        android:ellipsize="end" />
 
 </LinearLayout>

@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/clock_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/widget_bg_brand"
+    android:background="@drawable/widget_clock_bg"
     android:orientation="vertical"
-    android:gravity="center_vertical"
-    android:id="@+id/clock_root">
+    android:gravity="center_vertical">
 
     <TextView
         android:id="@+id/clock_greeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello"
-        android:textColor="@color/widget_text_light"
+        android:textColor="#FFFFFF"
         android:textSize="14sp"
-        android:alpha="0.9" />
+        android:alpha="0.92" />
 
     <TextClock
         android:id="@+id/clock_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         android:format12Hour="h:mm"
         android:format24Hour="HH:mm"
-        android:textColor="@color/widget_text_light"
-        android:textSize="40sp"
-        android:textStyle="bold" />
+        android:textColor="#FFFFFF"
+        android:textSize="42sp"
+        android:textStyle="bold"
+        android:letterSpacing="-0.02" />
 
     <TextClock
         android:id="@+id/clock_date"
@@ -32,8 +34,8 @@
         android:layout_height="wrap_content"
         android:format12Hour="EEEE, MMMM d"
         android:format24Hour="EEEE, MMMM d"
-        android:textColor="@color/widget_text_light"
+        android:textColor="#FFFFFF"
         android:textSize="13sp"
-        android:alpha="0.9" />
+        android:alpha="0.85" />
 
 </LinearLayout>

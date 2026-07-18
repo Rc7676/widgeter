@@ -1,113 +1,169 @@
 package com.widgeter.app
 
-import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.launch
 
-/** In-app screen to edit the note, reset the counter, and manage to-do items. */
+/** One-screen home for editing the note, counter and to-do list. */
 class MainActivity : AppCompatActivity() {
 
+    private val viewModel: MainViewModel by viewModels()
+    private lateinit var adapter: TodoAdapter
+
+    private lateinit var noteInput: TextInputEditText
+    private lateinit var counterValue: TextView
+    private lateinit var todoEmpty: TextView
+    private lateinit var todoProgress: TextView
+    private var noteInitialised = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        applyInsets()
 
+        bindViews()
         setupNote()
         setupCounter()
-        setupTodo()
+        setupTodos()
+        observeState()
     }
 
-    override fun onResume() {
-        super.onResume()
-        // Counter can change from the widget while the app is open.
-        findViewById<TextView>(R.id.text_counter).text = Store.getCounter(this).toString()
+    private fun applyInsets() {
+        val appBar = findViewById<View>(R.id.app_bar)
+        val scroll = findViewById<View>(R.id.content_scroll)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root)) { _, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            appBar.updatePadding(top = bars.top)
+            scroll.updatePadding(left = bars.left, right = bars.right, bottom = bars.bottom)
+            insets
+        }
+    }
+
+    private fun bindViews() {
+        noteInput = findViewById(R.id.note_input)
+        counterValue = findViewById(R.id.counter_value)
+        todoEmpty = findViewById(R.id.todo_empty)
+        todoProgress = findViewById(R.id.todo_progress)
     }
 
     private fun setupNote() {
-        val editNote = findViewById<EditText>(R.id.edit_note)
-        editNote.setText(Store.getNote(this))
-        findViewById<Button>(R.id.btn_save_note).setOnClickListener {
-            Store.setNote(this, editNote.text.toString())
-            Widgets.refreshAll(this)
-            Toast.makeText(this, R.string.note_saved, Toast.LENGTH_SHORT).show()
+        findViewById<MaterialButton>(R.id.btn_save_note).setOnClickListener {
+            viewModel.setNote(noteInput.text?.toString().orEmpty())
+            hideKeyboardFrom(noteInput)
+            Snackbar.make(it, R.string.note_saved, Snackbar.LENGTH_SHORT).show()
         }
     }
 
     private fun setupCounter() {
-        val counterText = findViewById<TextView>(R.id.text_counter)
-        counterText.text = Store.getCounter(this).toString()
-        findViewById<Button>(R.id.btn_reset_counter).setOnClickListener {
-            Store.setCounter(this, 0)
-            counterText.text = "0"
-            Widgets.refreshAll(this)
+        findViewById<View>(R.id.counter_plus).setOnClickListener {
+            it.performHapticClick()
+            viewModel.adjustCounter(1)
+        }
+        findViewById<View>(R.id.counter_minus).setOnClickListener {
+            it.performHapticClick()
+            viewModel.adjustCounter(-1)
+        }
+        findViewById<MaterialButton>(R.id.btn_reset_counter).setOnClickListener {
+            viewModel.resetCounter()
         }
     }
 
-    private fun setupTodo() {
-        val editTask = findViewById<EditText>(R.id.edit_task)
-        findViewById<Button>(R.id.btn_add_task).setOnClickListener {
-            val text = editTask.text.toString().trim()
-            if (text.isNotEmpty()) {
-                val items = Store.getTodos(this)
-                items.add(TodoItem(text, false))
-                Store.saveTodos(this, items)
-                editTask.setText("")
-                renderTodos()
-                Widgets.refreshAll(this)
+    private fun setupTodos() {
+        adapter = TodoAdapter(
+            onToggle = { viewModel.toggleTodo(it.id) },
+            onDelete = { removeWithUndo(it) }
+        )
+        val list = findViewById<RecyclerView>(R.id.todo_recycler)
+        list.layoutManager = LinearLayoutManager(this)
+        list.adapter = adapter
+        list.isNestedScrollingEnabled = false
+
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                r: RecyclerView, v: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder
+            ) = false
+
+            override fun onSwiped(vh: RecyclerView.ViewHolder, direction: Int) {
+                val pos = vh.bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    removeWithUndo(adapter.itemAt(pos))
+                }
+            }
+        }).attachToRecyclerView(list)
+
+        val taskInput = findViewById<TextInputEditText>(R.id.task_input)
+        findViewById<MaterialButton>(R.id.btn_add_task).setOnClickListener {
+            val text = taskInput.text?.toString().orEmpty()
+            if (text.isNotBlank()) {
+                viewModel.addTodo(text)
+                taskInput.setText("")
             }
         }
-        renderTodos()
+        findViewById<MaterialButton>(R.id.btn_clear_completed).setOnClickListener {
+            viewModel.clearCompleted()
+        }
     }
 
-    private fun renderTodos() {
-        val container = findViewById<LinearLayout>(R.id.todo_container)
-        container.removeAllViews()
-        val items = Store.getTodos(this)
-        for ((index, item) in items.withIndex()) {
-            val row = layoutInflater.inflate(R.layout.main_todo_row, container, false)
-            val check = row.findViewById<ImageView>(R.id.row_check)
-            val text = row.findViewById<TextView>(R.id.row_text)
-            val delete = row.findViewById<ImageButton>(R.id.row_delete)
+    private fun removeWithUndo(item: TodoItem) {
+        val index = adapter.currentList.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
+        viewModel.deleteTodo(item.id)
+        Snackbar.make(findViewById(R.id.root), R.string.task_deleted, Snackbar.LENGTH_LONG)
+            .setAction(R.string.undo) { viewModel.restoreTodo(item, index) }
+            .show()
+    }
 
-            text.text = item.text
-            check.setImageResource(
-                if (item.done) R.drawable.ic_check_on else R.drawable.ic_check_off
-            )
-            if (item.done) {
-                text.paintFlags = text.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                text.setTextColor(0xFF9E9E9E.toInt())
+    private fun observeState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect { state -> render(state) }
             }
-
-            val toggle = View.OnClickListener {
-                val list = Store.getTodos(this)
-                if (index < list.size) {
-                    list[index] = list[index].copy(done = !list[index].done)
-                    Store.saveTodos(this, list)
-                    renderTodos()
-                    Widgets.refreshAll(this)
-                }
-            }
-            check.setOnClickListener(toggle)
-            text.setOnClickListener(toggle)
-
-            delete.setOnClickListener {
-                val list = Store.getTodos(this)
-                if (index < list.size) {
-                    list.removeAt(index)
-                    Store.saveTodos(this, list)
-                    renderTodos()
-                    Widgets.refreshAll(this)
-                }
-            }
-
-            container.addView(row)
         }
+    }
+
+    private fun render(state: AppState) {
+        if (!noteInitialised) {
+            noteInput.setText(state.note)
+            noteInitialised = true
+        }
+        counterValue.text = state.counter.toString()
+
+        adapter.submitList(state.todos.toList())
+        val hasTasks = state.todos.isNotEmpty()
+        todoEmpty.visibility = if (hasTasks) View.GONE else View.VISIBLE
+        findViewById<View>(R.id.todo_recycler).visibility =
+            if (hasTasks) View.VISIBLE else View.GONE
+        todoProgress.visibility = if (hasTasks) View.VISIBLE else View.GONE
+        todoProgress.text = getString(R.string.todo_progress_fmt, state.doneCount, state.totalCount)
+        findViewById<View>(R.id.btn_clear_completed).visibility =
+            if (state.doneCount > 0) View.VISIBLE else View.GONE
+    }
+
+    private fun hideKeyboardFrom(view: View) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE)
+                as? android.view.inputmethod.InputMethodManager
+        imm?.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun View.performHapticClick() {
+        performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
     }
 }

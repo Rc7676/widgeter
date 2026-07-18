@@ -2,6 +2,7 @@ package com.widgeter.app
 
 import android.content.Context
 import android.content.Intent
+import androidx.core.content.ContextCompat
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 
@@ -35,19 +36,22 @@ private class TodoViewsFactory(
             R.id.todo_row_check,
             if (item.done) R.drawable.ic_check_on else R.drawable.ic_check_off
         )
-        // Dim completed tasks (strikethrough isn't remotable, so we grey them out).
+        // getColor resolves day/night automatically for the current config.
         views.setTextColor(
             R.id.todo_row_text,
-            if (item.done) 0xFF9E9E9E.toInt() else 0xFF1C1B1F.toInt()
+            ContextCompat.getColor(
+                context,
+                if (item.done) R.color.widget_on_card_muted else R.color.widget_on_card
+            )
         )
 
-        val fillIn = Intent().putExtra(TodoWidget.EXTRA_POS, position)
+        val fillIn = Intent().putExtra(TodoWidget.EXTRA_ID, item.id)
         views.setOnClickFillInIntent(R.id.todo_row, fillIn)
         return views
     }
 
     override fun getLoadingView(): RemoteViews? = null
     override fun getViewTypeCount(): Int = 1
-    override fun getItemId(position: Int): Long = position.toLong()
-    override fun hasStableIds(): Boolean = false
+    override fun getItemId(position: Int): Long = items[position].id
+    override fun hasStableIds(): Boolean = true
 }
