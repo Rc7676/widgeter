@@ -1,36 +1,38 @@
 # Widgeter
 
-A small Android app with **four home-screen widgets**:
+A Material 3 Android app with **seven home-screen widgets**:
 
 | Widget | What it does |
 | --- | --- |
-| ⏰ **Clock** | Time, date, and a greeting that changes through the day |
-| 📝 **Note** | Shows a note you edit in the app; tap the widget to open it |
-| 🔢 **Counter** | A big number with **+** and **−** buttons right on the widget |
-| ✅ **To-do** | A checklist you can tick off straight from the home screen |
+| ⏰ **Clock** | Time, date, and a greeting; compacts when resized small |
+| 📝 **Note** | A named note; tap to edit. Add several, each independent |
+| 🔢 **Counter** | A named counter with **+**/**−** and a custom step |
+| ✅ **To-do** | A checklist with drag-to-reorder, priorities and due dates |
+| 🔥 **Habit** | A daily check-in that tracks your streak |
+| 💧 **Water** | Log glasses of water; resets each day |
+| 🎯 **Countdown** | Days until a date you choose |
 
-The app itself is one simple screen where you edit the note, reset the counter,
-and add/remove to-do items. Everything stays in sync with the widgets.
+The app has a Material 3 UI with dark mode and dynamic (Material You) color,
+a settings screen, per-widget setup for counters/notes/countdowns, and an
+in-app screen for your primary note, counter and the shared to-do list.
 
 ---
 
 ## Get it onto your phone (no dev tools needed)
 
-The APK is built for you automatically by GitHub Actions.
+Every build publishes a versioned GitHub **Release** with the APK attached.
 
-1. On GitHub, open the **Actions** tab of this repo.
-2. Click the most recent **“Build APK”** run (green check-mark).
-3. Under **Artifacts**, download **`widgeter-debug-apk`** (a `.zip`).
-4. Unzip it — you'll get **`app-debug.apk`**.
-5. Send that file to your phone (email it to yourself, Google Drive, USB, etc.)
-   and tap it to install. Android will ask you to **allow installing from this
-   source** the first time — that's expected for apps installed outside the
-   Play Store. Accept it, then install.
-6. Long-press an empty spot on your home screen → **Widgets** → find
-   **Widgeter** → drag any of the four widgets onto your screen.
+1. Open the latest release: **https://github.com/Rc7676/widgeter/releases/latest**
+2. Under **Assets**, tap **`widgeter-<version>.apk`** to download it (do this on
+   the phone for the least friction).
+3. Open the downloaded file and tap **Install**. Android will ask you to
+   **allow installing from this source** the first time — that's expected for
+   apps installed outside the Play Store. Accept it, then install.
+4. Long-press an empty spot on your home screen → **Widgets** → find
+   **Widgeter** → drag any widget onto your screen.
 
-> This is a **debug** build signed with the standard Android debug key — perfect
-> for personal use and sideloading. It is not meant for the Play Store as-is.
+> This is a **debug**-signed build — perfect for personal use and sideloading.
+> It installs as an update over previous versions and keeps your data.
 
 ---
 
