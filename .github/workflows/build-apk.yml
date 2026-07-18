@@ -5,6 +5,9 @@ on:
     branches: [ "**" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,9 +32,29 @@ jobs:
       - name: Build debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: widgeter-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      - name: Publish APK to a Release
+        if: github.ref == 'refs/heads/claude/android-home-widget-app-nulgfz'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0
+          name: Widgeter v1.0
+          body: |
+            Widgeter — an Android app with four home-screen widgets
+            (clock, note, tap counter, to-do checklist).
+
+            **Install on your phone:**
+            1. Tap **app-debug.apk** below to download it.
+            2. Open the downloaded file; when asked, allow installing from this
+               source, then tap Install.
+            3. Long-press your home screen → Widgets → Widgeter → add any widget.
+
+            This is a debug build signed with the standard Android debug key,
+            intended for personal sideloading.
+          files: app/build/outputs/apk/debug/app-debug.apk
