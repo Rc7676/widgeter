@@ -53,6 +53,24 @@
     <string name="onboarding_body">You get four home-screen widgets:\n\n⏰  Clock — time, date &amp; a greeting\n📝  Note — a quick note you can edit\n🔢  Counter — tap + and − to count anything\n✅  To-do — a checklist you tick off\n\nTo add one: long-press your home screen → Widgets → Widgeter.</string>
     <string name="onboarding_got_it">Got it</string>
 
+    <!-- Navigation / pages -->
+    <string name="tasks_title">Tasks</string>
+    <string name="more_title">More</string>
+    <string name="notes_empty_page">No notes yet. Tap + to add one.</string>
+    <string name="counters_empty_page">No counters yet. Tap + to add one.</string>
+    <string name="new_note">New note</string>
+    <string name="new_counter">New counter</string>
+    <string name="note_empty_preview">(empty)</string>
+    <string name="rename">Rename</string>
+    <string name="delete">Delete</string>
+    <string name="habit_checkin">Check in</string>
+    <string name="habit_streak_fmt">🔥 %1$d day streak</string>
+    <string name="habit_none">No streak yet — check in today</string>
+    <string name="countdowns_title">Countdowns</string>
+    <string name="countdowns_empty">No countdowns yet.</string>
+    <string name="edit_note_title">Edit note</string>
+    <string name="new_countdown">New countdown</string>
+
     <!-- To-do editing -->
     <string name="cd_drag">Reorder</string>
     <string name="edit_title">Edit task</string>

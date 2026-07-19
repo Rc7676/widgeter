@@ -2,47 +2,43 @@ package com.widgeter.app
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
-/** One-screen home for editing the note, counter and to-do list. */
+/** Multi-page home: Notes, Counters, Tasks and More, via bottom navigation. */
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
-    private lateinit var adapter: TodoAdapter
+    private lateinit var notesAdapter: NotesAdapter
+    private lateinit var countersAdapter: CountersAdapter
+    private lateinit var todoAdapter: TodoAdapter
     private lateinit var itemTouchHelper: ItemTouchHelper
-
-    private lateinit var noteInput: TextInputEditText
+    private lateinit var toolbar: MaterialToolbar
     private lateinit var taskInput: TextInputEditText
-    private lateinit var counterValue: TextView
-    private lateinit var todoEmpty: TextView
-    private lateinit var todoProgress: TextView
-    private var noteInitialised = false
 
-    companion object {
-        const val ACTION_NEW_TASK = "com.widgeter.app.action.NEW_TASK"
-        const val ACTION_NEW_NOTE = "com.widgeter.app.action.NEW_NOTE"
-    }
+    private val dateFmt: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -50,166 +46,221 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         applyInsets()
 
-        setupToolbar()
-        bindViews()
-        setupNote()
-        setupCounter()
-        setupTodos()
-        observeState()
-        maybeShowOnboarding()
-        handleShortcut(intent)
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        setIntent(intent)
-        handleShortcut(intent)
-    }
-
-    private fun setupToolbar() {
-        findViewById<MaterialToolbar>(R.id.toolbar).apply {
-            inflateMenu(R.menu.main_menu)
-            setOnMenuItemClickListener { item ->
-                if (item.itemId == R.id.action_settings) {
-                    startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
-                    true
-                } else false
-            }
+        toolbar = findViewById(R.id.toolbar)
+        toolbar.inflateMenu(R.menu.main_menu)
+        toolbar.setOnMenuItemClickListener {
+            if (it.itemId == R.id.action_settings) { openSettings(); true } else false
         }
+
+        setupNotes()
+        setupCounters()
+        setupTasks()
+        setupMore()
+
+        val nav = findViewById<BottomNavigationView>(R.id.bottom_nav)
+        nav.setOnItemSelectedListener { showPage(it.itemId); true }
+        nav.selectedItemId = R.id.nav_notes
     }
 
-    private fun maybeShowOnboarding() {
-        if (Store.isOnboarded(this)) return
-        Store.setOnboarded(this)
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.onboarding_title)
-            .setMessage(R.string.onboarding_body)
-            .setPositiveButton(R.string.onboarding_got_it, null)
-            .show()
-    }
-
-    private fun handleShortcut(intent: Intent?) {
-        when (intent?.action) {
-            ACTION_NEW_NOTE -> focusAndOpenKeyboard(noteInput)
-            ACTION_NEW_TASK -> focusAndOpenKeyboard(taskInput)
-        }
-    }
-
-    private fun focusAndOpenKeyboard(view: View) {
-        view.post {
-            view.requestFocus()
-            val imm = getSystemService(INPUT_METHOD_SERVICE)
-                    as? android.view.inputmethod.InputMethodManager
-            imm?.showSoftInput(view, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
-        }
+    override fun onResume() {
+        super.onResume()
+        renderNotes(); renderCounters(); renderTasks(); renderMore()
     }
 
     private fun applyInsets() {
-        val appBar = findViewById<View>(R.id.app_bar)
-        val scroll = findViewById<View>(R.id.content_scroll)
+        val bar = findViewById<View>(R.id.toolbar)
+        val nav = findViewById<View>(R.id.bottom_nav)
+        val content = findViewById<View>(R.id.content)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root)) { _, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            appBar.updatePadding(top = bars.top)
-            scroll.updatePadding(left = bars.left, right = bars.right, bottom = bars.bottom)
+            val b = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            bar.updatePadding(top = b.top)
+            nav.updatePadding(bottom = b.bottom)
+            content.updatePadding(left = b.left, right = b.right)
             insets
         }
     }
 
-    private fun bindViews() {
-        noteInput = findViewById(R.id.note_input)
-        taskInput = findViewById(R.id.task_input)
-        counterValue = findViewById(R.id.counter_value)
-        todoEmpty = findViewById(R.id.todo_empty)
-        todoProgress = findViewById(R.id.todo_progress)
-    }
+    private fun openSettings() = startActivity(Intent(this, SettingsActivity::class.java))
 
-    private fun setupNote() {
-        findViewById<MaterialButton>(R.id.btn_save_note).setOnClickListener {
-            viewModel.setNote(noteInput.text?.toString().orEmpty())
-            hideKeyboardFrom(noteInput)
-            Snackbar.make(it, R.string.note_saved, Snackbar.LENGTH_SHORT).show()
-        }
-    }
+    private fun showPage(itemId: Int) {
+        findViewById<View>(R.id.page_notes_root).visibility =
+            if (itemId == R.id.nav_notes) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.page_counters_root).visibility =
+            if (itemId == R.id.nav_counters) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.page_tasks_root).visibility =
+            if (itemId == R.id.nav_tasks) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.page_more_root).visibility =
+            if (itemId == R.id.nav_more) View.VISIBLE else View.GONE
 
-    private fun setupCounter() {
-        findViewById<View>(R.id.counter_plus).setOnClickListener {
-            it.performHapticClick()
-            viewModel.adjustCounter(1)
+        toolbar.title = when (itemId) {
+            R.id.nav_counters -> getString(R.string.section_counter)
+            R.id.nav_tasks -> getString(R.string.tasks_title)
+            R.id.nav_more -> getString(R.string.more_title)
+            else -> getString(R.string.section_note)
         }
-        findViewById<View>(R.id.counter_minus).setOnClickListener {
-            it.performHapticClick()
-            viewModel.adjustCounter(-1)
-        }
-        findViewById<MaterialButton>(R.id.btn_reset_counter).setOnClickListener {
-            viewModel.resetCounter()
+        when (itemId) {
+            R.id.nav_counters -> renderCounters()
+            R.id.nav_tasks -> renderTasks()
+            R.id.nav_more -> renderMore()
+            else -> renderNotes()
         }
     }
 
-    private fun setupTodos() {
-        adapter = TodoAdapter(
-            onToggle = { viewModel.toggleTodo(it.id) },
-            onDelete = { removeWithUndo(it) },
-            onEdit = { showEditDialog(it) },
+    // ---------------- Notes ----------------
+
+    private fun setupNotes() {
+        notesAdapter = NotesAdapter(
+            onOpen = { editNoteDialog(it) },
+            onDelete = { Store.removeNoteEntry(this, it.id); afterChange(); renderNotes() }
+        )
+        val rv = findViewById<RecyclerView>(R.id.notes_recycler)
+        rv.layoutManager = LinearLayoutManager(this)
+        rv.adapter = notesAdapter
+        findViewById<View>(R.id.notes_fab).setOnClickListener {
+            val entry = Store.addNoteEntry(this, getString(R.string.notes_title))
+            afterChange(); renderNotes()
+            editNoteDialog(entry)
+        }
+    }
+
+    private fun renderNotes() {
+        val list = Store.getNoteList(this)
+        notesAdapter.submit(list)
+        findViewById<View>(R.id.notes_empty).visibility =
+            if (list.isEmpty()) View.VISIBLE else View.GONE
+    }
+
+    private fun editNoteDialog(entry: NoteEntry) {
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_note, null)
+        val name = view.findViewById<TextInputEditText>(R.id.dlg_name)
+        val text = view.findViewById<TextInputEditText>(R.id.dlg_text)
+        name.setText(entry.name)
+        text.setText(entry.text)
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.edit_note_title)
+            .setView(view)
+            .setNegativeButton(R.string.cancel, null)
+            .setNeutralButton(R.string.delete) { _, _ ->
+                Store.removeNoteEntry(this, entry.id); afterChange(); renderNotes()
+            }
+            .setPositiveButton(R.string.save_generic) { _, _ ->
+                Store.updateNoteEntry(this, entry.id, name.text?.toString().orEmpty(), text.text?.toString().orEmpty())
+                afterChange(); renderNotes()
+            }
+            .show()
+    }
+
+    // ---------------- Counters ----------------
+
+    private fun setupCounters() {
+        countersAdapter = CountersAdapter(
+            onAdjust = { entry, dir -> Store.adjustCounterEntry(this, entry.id, dir); afterChange(); renderCounters() },
+            onRename = { renameCounterDialog(it) },
+            onDelete = { Store.removeCounterEntry(this, it.id); afterChange(); renderCounters() }
+        )
+        val rv = findViewById<RecyclerView>(R.id.counters_recycler)
+        rv.layoutManager = LinearLayoutManager(this)
+        rv.adapter = countersAdapter
+        findViewById<View>(R.id.counters_fab).setOnClickListener { renameCounterDialog(null) }
+    }
+
+    private fun renderCounters() {
+        val list = Store.getCounterList(this)
+        countersAdapter.submit(list)
+        findViewById<View>(R.id.counters_empty).visibility =
+            if (list.isEmpty()) View.VISIBLE else View.GONE
+    }
+
+    private fun renameCounterDialog(entry: CounterEntry?) {
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_counter, null)
+        val name = view.findViewById<TextInputEditText>(R.id.dlg_name)
+        val step = view.findViewById<TextInputEditText>(R.id.dlg_step)
+        name.setText(entry?.name ?: "")
+        step.setText((entry?.step ?: 1).toString())
+        MaterialAlertDialogBuilder(this)
+            .setTitle(if (entry == null) R.string.new_counter else R.string.rename)
+            .setView(view)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.save_generic) { _, _ ->
+                val nm = name.text?.toString().orEmpty()
+                val st = step.text?.toString()?.trim()?.toIntOrNull()?.coerceAtLeast(1) ?: 1
+                if (entry == null) {
+                    val created = Store.addCounterEntry(this, nm)
+                    Store.renameCounterEntry(this, created.id, nm, st)
+                } else {
+                    Store.renameCounterEntry(this, entry.id, nm, st)
+                }
+                afterChange(); renderCounters()
+            }
+            .show()
+    }
+
+    // ---------------- Tasks ----------------
+
+    private fun setupTasks() {
+        todoAdapter = TodoAdapter(
+            onToggle = { Repo.toggleTodo(it.id); renderTasks() },
+            onDelete = { removeTaskWithUndo(it) },
+            onEdit = { showTaskEditDialog(it) },
             onStartDrag = { vh -> itemTouchHelper.startDrag(vh) }
         )
-        val list = findViewById<RecyclerView>(R.id.todo_recycler)
-        list.layoutManager = LinearLayoutManager(this)
-        list.adapter = adapter
-        list.isNestedScrollingEnabled = false
+        val rv = findViewById<RecyclerView>(R.id.todo_recycler)
+        rv.layoutManager = LinearLayoutManager(this)
+        rv.adapter = todoAdapter
 
         val callback = object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         ) {
             override fun isLongPressDragEnabled() = false
-
-            override fun onMove(
-                r: RecyclerView, v: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder
-            ): Boolean {
-                adapter.onItemMove(v.bindingAdapterPosition, t.bindingAdapterPosition)
+            override fun onMove(r: RecyclerView, v: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder): Boolean {
+                todoAdapter.onItemMove(v.bindingAdapterPosition, t.bindingAdapterPosition)
                 return true
             }
-
             override fun onSwiped(vh: RecyclerView.ViewHolder, direction: Int) {
                 val pos = vh.bindingAdapterPosition
-                if (pos != RecyclerView.NO_POSITION) {
-                    removeWithUndo(adapter.itemAt(pos))
-                }
+                if (pos != RecyclerView.NO_POSITION) removeTaskWithUndo(todoAdapter.itemAt(pos))
             }
-
             override fun clearView(r: RecyclerView, vh: RecyclerView.ViewHolder) {
                 super.clearView(r, vh)
-                viewModel.reorder(adapter.currentIds())
+                Repo.reorder(todoAdapter.currentIds()); renderTasks()
             }
         }
         itemTouchHelper = ItemTouchHelper(callback)
-        itemTouchHelper.attachToRecyclerView(list)
+        itemTouchHelper.attachToRecyclerView(rv)
 
+        taskInput = findViewById(R.id.task_input)
         findViewById<MaterialButton>(R.id.btn_add_task).setOnClickListener {
-            val text = taskInput.text?.toString().orEmpty()
-            if (text.isNotBlank()) {
-                viewModel.addTodo(text)
-                taskInput.setText("")
-            }
+            val t = taskInput.text?.toString().orEmpty()
+            if (t.isNotBlank()) { Repo.addTodo(t); taskInput.setText(""); renderTasks() }
         }
-        findViewById<MaterialButton>(R.id.btn_clear_completed).setOnClickListener {
-            viewModel.clearCompleted()
-        }
-        findViewById<MaterialButton>(R.id.btn_sort_todos).setOnClickListener {
-            viewModel.sortTodos()
-        }
+        findViewById<MaterialButton>(R.id.btn_sort_todos).setOnClickListener { Repo.sortTodos(); renderTasks() }
+        findViewById<MaterialButton>(R.id.btn_clear_completed).setOnClickListener { Repo.clearCompleted(); renderTasks() }
     }
 
-    private fun removeWithUndo(item: TodoItem) {
-        val index = adapter.currentIds().indexOf(item.id).coerceAtLeast(0)
-        viewModel.deleteTodo(item.id)
+    private fun renderTasks() {
+        val list = Store.getTodos(this)
+        todoAdapter.submit(list.toList())
+        val has = list.isNotEmpty()
+        findViewById<View>(R.id.todo_recycler).visibility = if (has) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.todo_empty).visibility = if (has) View.GONE else View.VISIBLE
+        val done = list.count { it.done }
+        val progress = findViewById<TextView>(R.id.todo_progress)
+        progress.visibility = if (has) View.VISIBLE else View.GONE
+        progress.text = getString(R.string.todo_progress_fmt, done, list.size)
+        findViewById<View>(R.id.btn_clear_completed).visibility = if (done > 0) View.VISIBLE else View.GONE
+    }
+
+    private fun removeTaskWithUndo(item: TodoItem) {
+        val index = todoAdapter.currentIds().indexOf(item.id).coerceAtLeast(0)
+        Repo.deleteTodo(item.id); renderTasks()
         Snackbar.make(findViewById(R.id.root), R.string.task_deleted, Snackbar.LENGTH_LONG)
-            .setAction(R.string.undo) { viewModel.restoreTodo(item, index) }
+            .setAction(R.string.undo) { Repo.restoreTodo(item, index); renderTasks() }
             .show()
     }
 
-    private fun showEditDialog(item: TodoItem) {
-        val view = layoutInflater.inflate(R.layout.dialog_edit_todo, null)
+    private fun showTaskEditDialog(item: TodoItem) {
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_edit_todo, null)
         val name = view.findViewById<TextInputEditText>(R.id.edit_name)
         val group = view.findViewById<MaterialButtonToggleGroup>(R.id.priority_group)
         val dueLabel = view.findViewById<TextView>(R.id.due_label)
@@ -218,44 +269,27 @@ class MainActivity : AppCompatActivity() {
 
         name.setText(item.text)
         group.check(
-            when (item.priority) {
-                1 -> R.id.prio_low
-                2 -> R.id.prio_med
-                3 -> R.id.prio_high
-                else -> R.id.prio_none
-            }
+            when (item.priority) { 1 -> R.id.prio_low; 2 -> R.id.prio_med; 3 -> R.id.prio_high; else -> R.id.prio_none }
         )
-
         var due = item.due
-        fun refreshDue() {
+        fun refresh() {
             if (due > 0) {
                 dueLabel.text = android.text.format.DateUtils.formatDateTime(
                     this, due,
-                    android.text.format.DateUtils.FORMAT_SHOW_DATE or
-                        android.text.format.DateUtils.FORMAT_ABBREV_MONTH
+                    android.text.format.DateUtils.FORMAT_SHOW_DATE or android.text.format.DateUtils.FORMAT_ABBREV_MONTH
                 )
                 btnClear.visibility = View.VISIBLE
-            } else {
-                dueLabel.text = ""
-                btnClear.visibility = View.GONE
-            }
+            } else { dueLabel.text = ""; btnClear.visibility = View.GONE }
         }
-        refreshDue()
-
+        refresh()
         btnDue.setOnClickListener {
             val picker = MaterialDatePicker.Builder.datePicker()
                 .setSelection(if (due > 0) due else MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
-            picker.addOnPositiveButtonClickListener { selection ->
-                due = selection
-                refreshDue()
-            }
-            picker.show(supportFragmentManager, "due_picker")
+            picker.addOnPositiveButtonClickListener { due = it; refresh() }
+            picker.show(supportFragmentManager, "due")
         }
-        btnClear.setOnClickListener {
-            due = 0L
-            refreshDue()
-        }
+        btnClear.setOnClickListener { due = 0L; refresh() }
 
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.edit_title)
@@ -263,49 +297,99 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton(R.string.cancel, null)
             .setPositiveButton(R.string.save_generic) { _, _ ->
                 val priority = when (group.checkedButtonId) {
-                    R.id.prio_low -> 1
-                    R.id.prio_med -> 2
-                    R.id.prio_high -> 3
-                    else -> 0
+                    R.id.prio_low -> 1; R.id.prio_med -> 2; R.id.prio_high -> 3; else -> 0
                 }
-                viewModel.updateTodo(item.id, name.text?.toString().orEmpty(), priority, due)
+                Repo.updateTodo(item.id, name.text?.toString().orEmpty(), priority, due); renderTasks()
             }
             .show()
     }
 
-    private fun observeState() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collect { state -> render(state) }
+    // ---------------- More ----------------
+
+    private fun setupMore() {
+        findViewById<MaterialButton>(R.id.habit_checkin_btn).setOnClickListener {
+            Store.checkInHabit(this); afterChange(); renderMore()
+        }
+        findViewById<MaterialButton>(R.id.water_plus_btn).setOnClickListener {
+            Store.addWater(this, 1); afterChange(); renderMore()
+        }
+        findViewById<MaterialButton>(R.id.water_minus_btn).setOnClickListener {
+            Store.addWater(this, -1); afterChange(); renderMore()
+        }
+        findViewById<MaterialButton>(R.id.countdown_add_btn).setOnClickListener { countdownDialog(null) }
+        findViewById<MaterialButton>(R.id.more_settings_btn).setOnClickListener { openSettings() }
+    }
+
+    private fun renderMore() {
+        val streak = Store.habitStreak(this)
+        findViewById<TextView>(R.id.habit_streak_text).text =
+            if (streak > 0) getString(R.string.habit_streak_fmt, streak) else getString(R.string.habit_none)
+        findViewById<TextView>(R.id.water_count_text).text =
+            "${Store.getWaterCount(this)}/${Store.getWaterGoal(this)}"
+
+        val container = findViewById<LinearLayout>(R.id.countdowns_container)
+        container.removeAllViews()
+        val list = Store.getCountdownList(this)
+        findViewById<View>(R.id.countdowns_empty).visibility =
+            if (list.isEmpty()) View.VISIBLE else View.GONE
+        for (cd in list) {
+            val row = LayoutInflater.from(this).inflate(R.layout.item_countdown_row, container, false)
+            row.findViewById<TextView>(R.id.cd_row_name).text = cd.name
+            row.findViewById<TextView>(R.id.cd_row_days).text = countdownSubtitle(cd)
+            row.setOnClickListener { countdownDialog(cd) }
+            row.findViewById<ImageButton>(R.id.cd_row_delete).setOnClickListener {
+                Store.removeCountdownEntry(this, cd.id); afterChange(); renderMore()
             }
+            container.addView(row)
         }
     }
 
-    private fun render(state: AppState) {
-        if (!noteInitialised) {
-            noteInput.setText(state.note)
-            noteInitialised = true
+    private fun countdownSubtitle(cd: CountdownEntry): String {
+        if (cd.date == 0L) return getString(R.string.countdown_set)
+        val days = cd.date - Store.todayEpochDay()
+        val dateStr = LocalDate.ofEpochDay(cd.date).format(dateFmt)
+        return when {
+            days > 0 -> "$days ${getString(R.string.countdown_until)} · $dateStr"
+            days == 0L -> "${getString(R.string.countdown_today)} · $dateStr"
+            else -> "${-days} ${getString(R.string.countdown_ago)} · $dateStr"
         }
-        counterValue.text = state.counter.toString()
-
-        adapter.submit(state.todos.toList())
-        val hasTasks = state.todos.isNotEmpty()
-        todoEmpty.visibility = if (hasTasks) View.GONE else View.VISIBLE
-        findViewById<View>(R.id.todo_recycler).visibility =
-            if (hasTasks) View.VISIBLE else View.GONE
-        todoProgress.visibility = if (hasTasks) View.VISIBLE else View.GONE
-        todoProgress.text = getString(R.string.todo_progress_fmt, state.doneCount, state.totalCount)
-        findViewById<View>(R.id.btn_clear_completed).visibility =
-            if (state.doneCount > 0) View.VISIBLE else View.GONE
     }
 
-    private fun hideKeyboardFrom(view: View) {
-        val imm = getSystemService(INPUT_METHOD_SERVICE)
-                as? android.view.inputmethod.InputMethodManager
-        imm?.hideSoftInputFromWindow(view.windowToken, 0)
+    private fun countdownDialog(entry: CountdownEntry?) {
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_countdown, null)
+        val name = view.findViewById<TextInputEditText>(R.id.dlg_name)
+        val dateLabel = view.findViewById<TextView>(R.id.dlg_date_label)
+        val btnDate = view.findViewById<MaterialButton>(R.id.dlg_date_btn)
+        name.setText(entry?.name ?: "")
+        var date = entry?.date ?: 0L
+        fun refresh() { dateLabel.text = if (date > 0) LocalDate.ofEpochDay(date).format(dateFmt) else "" }
+        refresh()
+        btnDate.setOnClickListener {
+            val initial = if (date > 0) date * 24L * 60L * 60L * 1000L else MaterialDatePicker.todayInUtcMilliseconds()
+            val picker = MaterialDatePicker.Builder.datePicker().setSelection(initial).build()
+            picker.addOnPositiveButtonClickListener {
+                date = Instant.ofEpochMilli(it).atZone(ZoneOffset.UTC).toLocalDate().toEpochDay(); refresh()
+            }
+            picker.show(supportFragmentManager, "cd")
+        }
+        MaterialAlertDialogBuilder(this)
+            .setTitle(if (entry == null) R.string.new_countdown else R.string.rename)
+            .setView(view)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.save_generic) { _, _ ->
+                val nm = name.text?.toString().orEmpty()
+                if (entry == null) {
+                    val created = Store.addCountdownEntry(this, nm)
+                    Store.updateCountdownEntry(this, created.id, nm, date)
+                } else {
+                    Store.updateCountdownEntry(this, entry.id, nm, date)
+                }
+                afterChange(); renderMore()
+            }
+            .show()
     }
 
-    private fun View.performHapticClick() {
-        performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
+    private fun afterChange() {
+        Widgets.refreshAll(this)
     }
 }

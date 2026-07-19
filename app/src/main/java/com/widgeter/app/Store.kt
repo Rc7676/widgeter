@@ -9,6 +9,11 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.time.LocalDate
 
+/** App-managed collection entries (the in-app pages). */
+data class NoteEntry(val id: Long, val name: String, val text: String, val time: Long)
+data class CounterEntry(val id: Long, val name: String, val value: Int, val step: Int)
+data class CountdownEntry(val id: Long, val name: String, val date: Long) // date = epoch day, 0 = unset
+
 /** A single to-do entry with a stable id (so toggles never hit the wrong row). */
 data class TodoItem(
     val id: Long,
@@ -179,6 +184,157 @@ object Store {
     }
 
     fun todayEpochDay(): Long = today()
+
+    // =====================================================================
+    // App-managed collections (the in-app pages). Independent of the
+    // home-screen widget instances, which keep their own per-instance data.
+    // =====================================================================
+
+    private const val KEY_NOTES = "notes_list"
+    private const val KEY_COUNTERS = "counters_list"
+    private const val KEY_COUNTDOWNS = "countdowns_list"
+
+    // ---- Notes collection ----
+    fun getNoteList(c: Context): MutableList<NoteEntry> {
+        val raw = prefs(c).getString(KEY_NOTES, null) ?: return mutableListOf()
+        return try {
+            val arr = JSONArray(raw)
+            MutableList(arr.length()) { i ->
+                val o = arr.getJSONObject(i)
+                NoteEntry(o.getLong("id"), o.optString("n", "Note"), o.optString("t", ""), o.optLong("ts", 0L))
+            }
+        } catch (e: Exception) {
+            mutableListOf()
+        }
+    }
+
+    private fun saveNoteList(c: Context, list: List<NoteEntry>) {
+        val arr = JSONArray()
+        for (n in list) {
+            arr.put(JSONObject().put("id", n.id).put("n", n.name).put("t", n.text).put("ts", n.time))
+        }
+        prefs(c).edit().putString(KEY_NOTES, arr.toString()).apply()
+    }
+
+    fun addNoteEntry(c: Context, name: String): NoteEntry {
+        val list = getNoteList(c)
+        val entry = NoteEntry(nextId(c), name.ifBlank { "Note" }, "", System.currentTimeMillis())
+        list.add(entry)
+        saveNoteList(c, list)
+        return entry
+    }
+
+    fun updateNoteEntry(c: Context, id: Long, name: String, text: String) {
+        val list = getNoteList(c)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx >= 0) {
+            list[idx] = list[idx].copy(name = name.ifBlank { "Note" }, text = text, time = System.currentTimeMillis())
+            saveNoteList(c, list)
+        }
+    }
+
+    fun removeNoteEntry(c: Context, id: Long) {
+        val list = getNoteList(c)
+        if (list.removeAll { it.id == id }) saveNoteList(c, list)
+    }
+
+    // ---- Counters collection ----
+    fun getCounterList(c: Context): MutableList<CounterEntry> {
+        val raw = prefs(c).getString(KEY_COUNTERS, null) ?: return mutableListOf()
+        return try {
+            val arr = JSONArray(raw)
+            MutableList(arr.length()) { i ->
+                val o = arr.getJSONObject(i)
+                CounterEntry(o.getLong("id"), o.optString("n", "Counter"), o.optInt("v", 0), o.optInt("s", 1))
+            }
+        } catch (e: Exception) {
+            mutableListOf()
+        }
+    }
+
+    private fun saveCounterList(c: Context, list: List<CounterEntry>) {
+        val arr = JSONArray()
+        for (e in list) {
+            arr.put(JSONObject().put("id", e.id).put("n", e.name).put("v", e.value).put("s", e.step))
+        }
+        prefs(c).edit().putString(KEY_COUNTERS, arr.toString()).apply()
+    }
+
+    fun addCounterEntry(c: Context, name: String): CounterEntry {
+        val list = getCounterList(c)
+        val entry = CounterEntry(nextId(c), name.ifBlank { "Counter" }, 0, 1)
+        list.add(entry)
+        saveCounterList(c, list)
+        return entry
+    }
+
+    fun renameCounterEntry(c: Context, id: Long, name: String, step: Int) {
+        val list = getCounterList(c)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx >= 0) {
+            list[idx] = list[idx].copy(name = name.ifBlank { "Counter" }, step = step.coerceAtLeast(1))
+            saveCounterList(c, list)
+        }
+    }
+
+    fun adjustCounterEntry(c: Context, id: Long, deltaSteps: Int) {
+        val list = getCounterList(c)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx >= 0) {
+            val e = list[idx]
+            list[idx] = e.copy(value = e.value + e.step * deltaSteps)
+            saveCounterList(c, list)
+        }
+    }
+
+    fun removeCounterEntry(c: Context, id: Long) {
+        val list = getCounterList(c)
+        if (list.removeAll { it.id == id }) saveCounterList(c, list)
+    }
+
+    // ---- Countdowns collection ----
+    fun getCountdownList(c: Context): MutableList<CountdownEntry> {
+        val raw = prefs(c).getString(KEY_COUNTDOWNS, null) ?: return mutableListOf()
+        return try {
+            val arr = JSONArray(raw)
+            MutableList(arr.length()) { i ->
+                val o = arr.getJSONObject(i)
+                CountdownEntry(o.getLong("id"), o.optString("n", "Countdown"), o.optLong("d", 0L))
+            }
+        } catch (e: Exception) {
+            mutableListOf()
+        }
+    }
+
+    private fun saveCountdownList(c: Context, list: List<CountdownEntry>) {
+        val arr = JSONArray()
+        for (e in list) {
+            arr.put(JSONObject().put("id", e.id).put("n", e.name).put("d", e.date))
+        }
+        prefs(c).edit().putString(KEY_COUNTDOWNS, arr.toString()).apply()
+    }
+
+    fun addCountdownEntry(c: Context, name: String): CountdownEntry {
+        val list = getCountdownList(c)
+        val entry = CountdownEntry(nextId(c), name.ifBlank { "Countdown" }, 0L)
+        list.add(entry)
+        saveCountdownList(c, list)
+        return entry
+    }
+
+    fun updateCountdownEntry(c: Context, id: Long, name: String, date: Long) {
+        val list = getCountdownList(c)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx >= 0) {
+            list[idx] = list[idx].copy(name = name.ifBlank { "Countdown" }, date = date)
+            saveCountdownList(c, list)
+        }
+    }
+
+    fun removeCountdownEntry(c: Context, id: Long) {
+        val list = getCountdownList(c)
+        if (list.removeAll { it.id == id }) saveCountdownList(c, list)
+    }
 
     // ---- Ids ----
     fun nextId(c: Context): Long {
