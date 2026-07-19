@@ -27,6 +27,7 @@ class CountdownConfigActivity : AppCompatActivity() {
     private var targetEpochDay = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(Themes.styleFor(this))
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setResult(RESULT_CANCELED)

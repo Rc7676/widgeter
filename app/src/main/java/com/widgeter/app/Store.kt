@@ -52,6 +52,11 @@ object Store {
     fun setThemeMode(c: Context, mode: Int) =
         prefs(c).edit().putInt(KEY_THEME, mode).apply()
 
+    /** Accent theme index: 0 Purple, 1 Red, 2 Blue, 3 Yellow, 4 Black. */
+    fun getColorTheme(c: Context): Int = prefs(c).getInt("color_theme", 0)
+    fun setColorTheme(c: Context, index: Int) =
+        prefs(c).edit().putInt("color_theme", index).apply()
+
     fun isOnboarded(c: Context): Boolean = prefs(c).getBoolean(KEY_ONBOARDED, false)
     fun setOnboarded(c: Context) = prefs(c).edit().putBoolean(KEY_ONBOARDED, true).apply()
 

@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var toolbar: MaterialToolbar
     private lateinit var taskInput: TextInputEditText
     private lateinit var nav: BottomNavigationView
+    private var appliedTheme = 0
 
     companion object {
         const val ACTION_NEW_TASK = "com.widgeter.app.action.NEW_TASK"
@@ -50,6 +51,8 @@ class MainActivity : AppCompatActivity() {
     private val heroDateFmt: DateTimeFormatter = DateTimeFormatter.ofPattern("EEEE, MMM d")
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(Themes.styleFor(this))
+        appliedTheme = Store.getColorTheme(this)
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -82,6 +85,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        if (appliedTheme != Store.getColorTheme(this)) { recreate(); return }
         renderNotes(); renderCounters(); renderTasks(); renderMore()
     }
 

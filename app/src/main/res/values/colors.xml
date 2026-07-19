@@ -30,6 +30,42 @@
     <color name="on_hero">#FFFFFF</color>
     <color name="hero_tile">#26FFFFFF</color>
 
+    <!-- ===== Theme accent palettes ===== -->
+    <!-- Red -->
+    <color name="red_primary">#E5342E</color>
+    <color name="red_on_primary">#FFFFFF</color>
+    <color name="red_container">#FFDAD6</color>
+    <color name="red_on_container">#410002</color>
+    <color name="red_grad_start">#FF7A6B</color>
+    <color name="red_grad_mid">#E5342E</color>
+    <color name="red_grad_end">#9E1414</color>
+    <!-- Blue -->
+    <color name="blue_primary">#1E6FE0</color>
+    <color name="blue_on_primary">#FFFFFF</color>
+    <color name="blue_container">#D8E2FF</color>
+    <color name="blue_on_container">#001A41</color>
+    <color name="blue_grad_start">#5AA0FF</color>
+    <color name="blue_grad_mid">#1E6FE0</color>
+    <color name="blue_grad_end">#0A3C97</color>
+    <!-- Yellow (dark text on light gradient) -->
+    <color name="yellow_primary">#E5A600</color>
+    <color name="yellow_on_primary">#2A2000</color>
+    <color name="yellow_container">#FFE08A</color>
+    <color name="yellow_on_container">#3A2E00</color>
+    <color name="yellow_grad_start">#FFD84D</color>
+    <color name="yellow_grad_mid">#F5B300</color>
+    <color name="yellow_grad_end">#C98A00</color>
+    <color name="yellow_hero_on">#241A00</color>
+    <color name="yellow_hero_tile">#26000000</color>
+    <!-- Black (monochrome) -->
+    <color name="black_primary">#1F1F24</color>
+    <color name="black_on_primary">#FFFFFF</color>
+    <color name="black_container">#E3E2E6</color>
+    <color name="black_on_container">#1A1C1E</color>
+    <color name="black_grad_start">#4C4C52</color>
+    <color name="black_grad_mid">#26262B</color>
+    <color name="black_grad_end">#0A0A0C</color>
+
     <!-- Priority (apply in both light and dark) -->
     <color name="prio_none">#00000000</color>
     <color name="prio_low">#43A047</color>

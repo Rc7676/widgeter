@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Per-theme hero gradient + on-gradient colors. -->
+    <attr name="heroGradStart" format="color" />
+    <attr name="heroGradMid" format="color" />
+    <attr name="heroGradEnd" format="color" />
+    <attr name="heroOn" format="color" />
+    <attr name="heroTile" format="color" />
+</resources>

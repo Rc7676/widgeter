@@ -26,6 +26,7 @@ class CounterConfigActivity : AppCompatActivity() {
     private val choiceMap = HashMap<Int, Long?>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(Themes.styleFor(this))
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setResult(RESULT_CANCELED)

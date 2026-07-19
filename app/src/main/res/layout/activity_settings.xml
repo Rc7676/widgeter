@@ -72,6 +72,26 @@
 
                 <LinearLayout style="@style/CardInner">
 
+                    <LinearLayout style="@style/CardHeader">
+                        <ImageView style="@style/CardHeaderIcon"
+                            android:src="@drawable/ic_note" />
+                        <TextView style="@style/CardHeaderText"
+                            android:text="@string/settings_color" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/color_swatches"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView style="@style/Card">
+
+                <LinearLayout style="@style/CardInner">
+
                     <TextView
                         style="@style/CardHeaderText"
                         android:text="@string/settings_about" />

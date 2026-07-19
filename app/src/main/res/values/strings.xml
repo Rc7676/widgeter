@@ -42,6 +42,14 @@
     <!-- Settings -->
     <string name="settings_title">Settings</string>
     <string name="settings_theme">Appearance</string>
+    <string name="settings_color">Accent color</string>
+    <string-array name="color_names">
+        <item>Purple</item>
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Yellow</item>
+        <item>Black</item>
+    </string-array>
     <string name="theme_system">Follow system</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>

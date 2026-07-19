@@ -15,6 +15,27 @@
     <color name="on_surface_variant">#CAC4D0</color>
     <color name="outline">#938F99</color>
 
+    <!-- Theme accent palettes (dark tuning) -->
+    <color name="red_primary">#FFB4AB</color>
+    <color name="red_on_primary">#690005</color>
+    <color name="red_container">#93000A</color>
+    <color name="red_on_container">#FFDAD6</color>
+
+    <color name="blue_primary">#ADC6FF</color>
+    <color name="blue_on_primary">#002E69</color>
+    <color name="blue_container">#00429B</color>
+    <color name="blue_on_container">#D8E2FF</color>
+
+    <color name="yellow_primary">#F4C22B</color>
+    <color name="yellow_on_primary">#3A2E00</color>
+    <color name="yellow_container">#5C4300</color>
+    <color name="yellow_on_container">#FFE08A</color>
+
+    <color name="black_primary">#E4E2E6</color>
+    <color name="black_on_primary">#1B1B1F</color>
+    <color name="black_container">#2F2F34</color>
+    <color name="black_on_container">#E3E2E6</color>
+
     <!-- Widget palette (night) -->
     <color name="widget_card">#221F26</color>
     <color name="widget_on_card">#E6E1E5</color>

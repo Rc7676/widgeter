@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Widgeter" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/brand</item>
-        <item name="colorOnPrimary">@color/on_brand</item>
-        <item name="colorPrimaryContainer">@color/brand_container</item>
-        <item name="colorOnPrimaryContainer">@color/on_brand_container</item>
-        <item name="colorSecondary">@color/brand</item>
-        <item name="colorSecondaryContainer">@color/brand_container</item>
-        <item name="colorOnSecondaryContainer">@color/on_brand_container</item>
+
+    <!-- Shared surfaces, system bars, defaults. -->
+    <style name="Theme.Widgeter.Base" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:colorBackground">@color/app_bg</item>
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/on_surface</item>
@@ -16,5 +11,80 @@
         <item name="colorOutline">@color/outline</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="heroOn">@color/on_hero</item>
+        <item name="heroTile">@color/hero_tile</item>
     </style>
+
+    <!-- Purple (default) -->
+    <style name="Theme.Widgeter" parent="Theme.Widgeter.Base">
+        <item name="colorPrimary">@color/brand</item>
+        <item name="colorOnPrimary">@color/on_brand</item>
+        <item name="colorPrimaryContainer">@color/brand_container</item>
+        <item name="colorOnPrimaryContainer">@color/on_brand_container</item>
+        <item name="colorSecondary">@color/brand</item>
+        <item name="colorSecondaryContainer">@color/brand_container</item>
+        <item name="colorOnSecondaryContainer">@color/on_brand_container</item>
+        <item name="heroGradStart">@color/grad_start</item>
+        <item name="heroGradMid">@color/grad_mid</item>
+        <item name="heroGradEnd">@color/grad_end</item>
+    </style>
+
+    <!-- Red -->
+    <style name="Theme.Widgeter.Red" parent="Theme.Widgeter.Base">
+        <item name="colorPrimary">@color/red_primary</item>
+        <item name="colorOnPrimary">@color/red_on_primary</item>
+        <item name="colorPrimaryContainer">@color/red_container</item>
+        <item name="colorOnPrimaryContainer">@color/red_on_container</item>
+        <item name="colorSecondary">@color/red_primary</item>
+        <item name="colorSecondaryContainer">@color/red_container</item>
+        <item name="colorOnSecondaryContainer">@color/red_on_container</item>
+        <item name="heroGradStart">@color/red_grad_start</item>
+        <item name="heroGradMid">@color/red_grad_mid</item>
+        <item name="heroGradEnd">@color/red_grad_end</item>
+    </style>
+
+    <!-- Blue -->
+    <style name="Theme.Widgeter.Blue" parent="Theme.Widgeter.Base">
+        <item name="colorPrimary">@color/blue_primary</item>
+        <item name="colorOnPrimary">@color/blue_on_primary</item>
+        <item name="colorPrimaryContainer">@color/blue_container</item>
+        <item name="colorOnPrimaryContainer">@color/blue_on_container</item>
+        <item name="colorSecondary">@color/blue_primary</item>
+        <item name="colorSecondaryContainer">@color/blue_container</item>
+        <item name="colorOnSecondaryContainer">@color/blue_on_container</item>
+        <item name="heroGradStart">@color/blue_grad_start</item>
+        <item name="heroGradMid">@color/blue_grad_mid</item>
+        <item name="heroGradEnd">@color/blue_grad_end</item>
+    </style>
+
+    <!-- Yellow (dark text on gradient) -->
+    <style name="Theme.Widgeter.Yellow" parent="Theme.Widgeter.Base">
+        <item name="colorPrimary">@color/yellow_primary</item>
+        <item name="colorOnPrimary">@color/yellow_on_primary</item>
+        <item name="colorPrimaryContainer">@color/yellow_container</item>
+        <item name="colorOnPrimaryContainer">@color/yellow_on_container</item>
+        <item name="colorSecondary">@color/yellow_primary</item>
+        <item name="colorSecondaryContainer">@color/yellow_container</item>
+        <item name="colorOnSecondaryContainer">@color/yellow_on_container</item>
+        <item name="heroGradStart">@color/yellow_grad_start</item>
+        <item name="heroGradMid">@color/yellow_grad_mid</item>
+        <item name="heroGradEnd">@color/yellow_grad_end</item>
+        <item name="heroOn">@color/yellow_hero_on</item>
+        <item name="heroTile">@color/yellow_hero_tile</item>
+    </style>
+
+    <!-- Black (monochrome) -->
+    <style name="Theme.Widgeter.Black" parent="Theme.Widgeter.Base">
+        <item name="colorPrimary">@color/black_primary</item>
+        <item name="colorOnPrimary">@color/black_on_primary</item>
+        <item name="colorPrimaryContainer">@color/black_container</item>
+        <item name="colorOnPrimaryContainer">@color/black_on_container</item>
+        <item name="colorSecondary">@color/black_primary</item>
+        <item name="colorSecondaryContainer">@color/black_container</item>
+        <item name="colorOnSecondaryContainer">@color/black_on_container</item>
+        <item name="heroGradStart">@color/black_grad_start</item>
+        <item name="heroGradMid">@color/black_grad_mid</item>
+        <item name="heroGradEnd">@color/black_grad_end</item>
+    </style>
+
 </resources>
