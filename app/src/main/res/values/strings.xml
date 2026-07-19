@@ -50,7 +50,7 @@
 
     <!-- Onboarding -->
     <string name="onboarding_title">Welcome to Widgeter 👋</string>
-    <string name="onboarding_body">You get four home-screen widgets:\n\n⏰  Clock — time, date &amp; a greeting\n📝  Note — a quick note you can edit\n🔢  Counter — tap + and − to count anything\n✅  To-do — a checklist you tick off\n\nTo add one: long-press your home screen → Widgets → Widgeter.</string>
+    <string name="onboarding_body">Use the tabs at the bottom to manage everything:\n\n📝  Notes · 🔢  Counters · ✅  Tasks · ⋯  More (habit, water, countdowns)\n\nAdd and name as many notes and counters as you like. Then long-press your home screen → Widgets → Widgeter to place a widget — a Counter or Note widget can show any item you created here.</string>
     <string name="onboarding_got_it">Got it</string>
 
     <!-- Home hero stats -->
@@ -69,6 +69,7 @@
     <string name="note_empty_preview">(empty)</string>
     <string name="rename">Rename</string>
     <string name="delete">Delete</string>
+    <string name="item_deleted">Deleted</string>
     <string name="habit_checkin">Check in</string>
     <string name="habit_streak_fmt">🔥 %1$d day streak</string>
     <string name="habit_none">No streak yet — check in today</string>

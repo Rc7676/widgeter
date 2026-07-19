@@ -38,6 +38,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var itemTouchHelper: ItemTouchHelper
     private lateinit var toolbar: MaterialToolbar
     private lateinit var taskInput: TextInputEditText
+    private lateinit var nav: BottomNavigationView
+
+    companion object {
+        const val ACTION_NEW_TASK = "com.widgeter.app.action.NEW_TASK"
+        const val ACTION_NEW_NOTE = "com.widgeter.app.action.NEW_NOTE"
+        const val EXTRA_OPEN_NOTE = "com.widgeter.app.OPEN_NOTE"
+    }
 
     private val dateFmt: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
     private val heroDateFmt: DateTimeFormatter = DateTimeFormatter.ofPattern("EEEE, MMM d")
@@ -59,14 +66,60 @@ class MainActivity : AppCompatActivity() {
         setupTasks()
         setupMore()
 
-        val nav = findViewById<BottomNavigationView>(R.id.bottom_nav)
+        nav = findViewById(R.id.bottom_nav)
         nav.setOnItemSelectedListener { showPage(it.itemId); true }
         nav.selectedItemId = R.id.nav_notes
+
+        maybeOnboard()
+        handleIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIntent(intent)
     }
 
     override fun onResume() {
         super.onResume()
         renderNotes(); renderCounters(); renderTasks(); renderMore()
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        val openNoteId = intent?.getLongExtra(EXTRA_OPEN_NOTE, 0L) ?: 0L
+        when {
+            intent?.action == ACTION_NEW_TASK -> {
+                nav.selectedItemId = R.id.nav_tasks
+                taskInput.post {
+                    taskInput.requestFocus()
+                    showKeyboard(taskInput)
+                }
+            }
+            intent?.action == ACTION_NEW_NOTE -> {
+                nav.selectedItemId = R.id.nav_notes
+                val entry = Store.addNoteEntry(this, getString(R.string.notes_title))
+                afterChange(); renderNotes(); editNoteDialog(entry)
+            }
+            openNoteId != 0L -> {
+                nav.selectedItemId = R.id.nav_notes
+                Store.findNote(this, openNoteId)?.let { editNoteDialog(it) }
+            }
+        }
+    }
+
+    private fun maybeOnboard() {
+        if (Store.isOnboarded(this)) return
+        Store.setOnboarded(this)
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.onboarding_title)
+            .setMessage(R.string.onboarding_body)
+            .setPositiveButton(R.string.onboarding_got_it, null)
+            .show()
+    }
+
+    private fun showKeyboard(view: View) {
+        (getSystemService(INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager)
+            ?.showSoftInput(view, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
     }
 
     private fun applyInsets() {
@@ -98,7 +151,7 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_counters -> getString(R.string.section_counter)
             R.id.nav_tasks -> getString(R.string.tasks_title)
             R.id.nav_more -> getString(R.string.more_title)
-            else -> "" // Notes page uses the hero header as its title
+            else -> getString(R.string.app_name) // Notes/home
         }
         when (itemId) {
             R.id.nav_counters -> renderCounters()
@@ -113,7 +166,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupNotes() {
         notesAdapter = NotesAdapter(
             onOpen = { editNoteDialog(it) },
-            onDelete = { Store.removeNoteEntry(this, it.id); afterChange(); renderNotes() }
+            onDelete = { deleteNoteWithUndo(it) }
         )
         val rv = findViewById<RecyclerView>(R.id.notes_recycler)
         rv.layoutManager = LinearLayoutManager(this)
@@ -158,13 +211,19 @@ class MainActivity : AppCompatActivity() {
             .setTitle(R.string.edit_note_title)
             .setView(view)
             .setNegativeButton(R.string.cancel, null)
-            .setNeutralButton(R.string.delete) { _, _ ->
-                Store.removeNoteEntry(this, entry.id); afterChange(); renderNotes()
-            }
+            .setNeutralButton(R.string.delete) { _, _ -> deleteNoteWithUndo(entry) }
             .setPositiveButton(R.string.save_generic) { _, _ ->
                 Store.updateNoteEntry(this, entry.id, name.text?.toString().orEmpty(), text.text?.toString().orEmpty())
                 afterChange(); renderNotes()
             }
+            .show()
+    }
+
+    private fun deleteNoteWithUndo(entry: NoteEntry) {
+        val index = Store.getNoteList(this).indexOfFirst { it.id == entry.id }.coerceAtLeast(0)
+        Store.removeNoteEntry(this, entry.id); afterChange(); renderNotes()
+        Snackbar.make(findViewById(R.id.root), R.string.item_deleted, Snackbar.LENGTH_LONG)
+            .setAction(R.string.undo) { Store.restoreNoteEntry(this, entry, index); afterChange(); renderNotes() }
             .show()
     }
 
@@ -174,7 +233,7 @@ class MainActivity : AppCompatActivity() {
         countersAdapter = CountersAdapter(
             onAdjust = { entry, dir -> Store.adjustCounterEntry(this, entry.id, dir); afterChange(); renderCounters() },
             onRename = { renameCounterDialog(it) },
-            onDelete = { Store.removeCounterEntry(this, it.id); afterChange(); renderCounters() }
+            onDelete = { deleteCounterWithUndo(it) }
         )
         val rv = findViewById<RecyclerView>(R.id.counters_recycler)
         rv.layoutManager = LinearLayoutManager(this)
@@ -187,6 +246,14 @@ class MainActivity : AppCompatActivity() {
         countersAdapter.submit(list)
         findViewById<View>(R.id.counters_empty).visibility =
             if (list.isEmpty()) View.VISIBLE else View.GONE
+    }
+
+    private fun deleteCounterWithUndo(entry: CounterEntry) {
+        val index = Store.getCounterList(this).indexOfFirst { it.id == entry.id }.coerceAtLeast(0)
+        Store.removeCounterEntry(this, entry.id); afterChange(); renderCounters()
+        Snackbar.make(findViewById(R.id.root), R.string.item_deleted, Snackbar.LENGTH_LONG)
+            .setAction(R.string.undo) { Store.restoreCounterEntry(this, entry, index); afterChange(); renderCounters() }
+            .show()
     }
 
     private fun renameCounterDialog(entry: CounterEntry?) {
@@ -356,10 +423,18 @@ class MainActivity : AppCompatActivity() {
             row.findViewById<TextView>(R.id.cd_row_days).text = countdownSubtitle(cd)
             row.setOnClickListener { countdownDialog(cd) }
             row.findViewById<ImageButton>(R.id.cd_row_delete).setOnClickListener {
-                Store.removeCountdownEntry(this, cd.id); afterChange(); renderMore()
+                deleteCountdownWithUndo(cd)
             }
             container.addView(row)
         }
+    }
+
+    private fun deleteCountdownWithUndo(cd: CountdownEntry) {
+        val index = Store.getCountdownList(this).indexOfFirst { it.id == cd.id }.coerceAtLeast(0)
+        Store.removeCountdownEntry(this, cd.id); afterChange(); renderMore()
+        Snackbar.make(findViewById(R.id.root), R.string.item_deleted, Snackbar.LENGTH_LONG)
+            .setAction(R.string.undo) { Store.restoreCountdownEntry(this, cd, index); afterChange(); renderMore() }
+            .show()
     }
 
     private fun countdownSubtitle(cd: CountdownEntry): String {

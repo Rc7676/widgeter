@@ -336,6 +336,25 @@ object Store {
         if (list.removeAll { it.id == id }) saveCountdownList(c, list)
     }
 
+    /** Re-inserts a deleted entry at a position, for Undo. */
+    fun restoreNoteEntry(c: Context, entry: NoteEntry, index: Int) {
+        val list = getNoteList(c)
+        list.add(index.coerceIn(0, list.size), entry)
+        saveNoteList(c, list)
+    }
+
+    fun restoreCounterEntry(c: Context, entry: CounterEntry, index: Int) {
+        val list = getCounterList(c)
+        list.add(index.coerceIn(0, list.size), entry)
+        saveCounterList(c, list)
+    }
+
+    fun restoreCountdownEntry(c: Context, entry: CountdownEntry, index: Int) {
+        val list = getCountdownList(c)
+        list.add(index.coerceIn(0, list.size), entry)
+        saveCountdownList(c, list)
+    }
+
     fun findCounter(c: Context, id: Long): CounterEntry? = getCounterList(c).firstOrNull { it.id == id }
     fun findNote(c: Context, id: Long): NoteEntry? = getNoteList(c).firstOrNull { it.id == id }
 

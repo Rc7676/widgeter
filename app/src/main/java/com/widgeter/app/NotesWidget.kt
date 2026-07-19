@@ -50,9 +50,19 @@ class NotesWidget : AppWidgetProvider() {
             } else {
                 views.setViewVisibility(R.id.notes_time, View.GONE)
             }
-            views.setOnClickPendingIntent(R.id.notes_root, openAppPendingIntent(context, id + 60000))
+            views.setOnClickPendingIntent(R.id.notes_root, openNoteIntent(context, id, entry.id))
         }
         mgr.updateAppWidget(id, views)
+    }
+
+    private fun openNoteIntent(context: Context, widgetId: Int, noteId: Long): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .putExtra(MainActivity.EXTRA_OPEN_NOTE, noteId)
+        return PendingIntent.getActivity(
+            context, widgetId + 60000, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
     private fun editIntent(context: Context, id: Int): PendingIntent {
