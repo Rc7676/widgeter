@@ -113,6 +113,11 @@
     <string name="cfg_countdown_title">Countdown widget</string>
     <string name="cfg_countdown_name_hint">e.g. Vacation, Birthday, Launch</string>
     <string name="cfg_pick_date">Pick date</string>
+    <string name="cfg_which_counter">Which counter should this widget show?</string>
+    <string name="cfg_which_note">Which note should this widget show?</string>
+    <string name="cfg_new_counter_opt">＋ New counter</string>
+    <string name="cfg_new_note_opt">＋ New note</string>
+    <string name="widget_pick">Tap to choose</string>
 
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>

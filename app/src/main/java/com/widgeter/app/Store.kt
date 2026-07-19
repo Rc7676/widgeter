@@ -336,6 +336,52 @@ object Store {
         if (list.removeAll { it.id == id }) saveCountdownList(c, list)
     }
 
+    fun findCounter(c: Context, id: Long): CounterEntry? = getCounterList(c).firstOrNull { it.id == id }
+    fun findNote(c: Context, id: Long): NoteEntry? = getNoteList(c).firstOrNull { it.id == id }
+
+    fun setCounterEntryValue(c: Context, id: Long, value: Int) {
+        val list = getCounterList(c)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx >= 0) {
+            list[idx] = list[idx].copy(value = value)
+            saveCounterList(c, list)
+        }
+    }
+
+    // ---- Widget → collection item mapping ----
+    fun getCounterTarget(c: Context, widgetId: Int): Long = prefs(c).getLong("wtgt_cnt_$widgetId", 0L)
+    fun setCounterTarget(c: Context, widgetId: Int, entryId: Long) =
+        prefs(c).edit().putLong("wtgt_cnt_$widgetId", entryId).apply()
+    fun clearCounterTarget(c: Context, widgetId: Int) =
+        prefs(c).edit().remove("wtgt_cnt_$widgetId").apply()
+
+    fun getNoteTarget(c: Context, widgetId: Int): Long = prefs(c).getLong("wtgt_note_$widgetId", 0L)
+    fun setNoteTarget(c: Context, widgetId: Int, entryId: Long) =
+        prefs(c).edit().putLong("wtgt_note_$widgetId", entryId).apply()
+    fun clearNoteTarget(c: Context, widgetId: Int) =
+        prefs(c).edit().remove("wtgt_note_$widgetId").apply()
+
+    /** Resolves the counter a widget shows, migrating legacy per-widget data on first use. */
+    fun resolveCounterForWidget(c: Context, widgetId: Int): CounterEntry? {
+        val target = getCounterTarget(c, widgetId)
+        if (target != 0L) return findCounter(c, target) // may be null if deleted in-app
+        val entry = addCounterEntry(c, getCounterLabel(c, widgetId))
+        renameCounterEntry(c, entry.id, getCounterLabel(c, widgetId), getCounterStep(c, widgetId))
+        setCounterEntryValue(c, entry.id, getCounterValue(c, widgetId))
+        setCounterTarget(c, widgetId, entry.id)
+        return findCounter(c, entry.id)
+    }
+
+    /** Resolves the note a widget shows, migrating legacy per-widget data on first use. */
+    fun resolveNoteForWidget(c: Context, widgetId: Int): NoteEntry? {
+        val target = getNoteTarget(c, widgetId)
+        if (target != 0L) return findNote(c, target)
+        val entry = addNoteEntry(c, getNoteLabel(c, widgetId))
+        updateNoteEntry(c, entry.id, getNoteLabel(c, widgetId), getNoteText(c, widgetId))
+        setNoteTarget(c, widgetId, entry.id)
+        return findNote(c, entry.id)
+    }
+
     // ---- Ids ----
     fun nextId(c: Context): Long {
         val next = prefs(c).getLong(KEY_SEQ, 1L)

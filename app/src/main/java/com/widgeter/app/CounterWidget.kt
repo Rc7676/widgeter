@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 
-/** A named counter with + and − buttons; each widget instance is independent. */
+/** A named counter backed by an app collection item; each widget picks one. */
 class CounterWidget : AppWidgetProvider() {
 
     companion object {
@@ -24,7 +24,7 @@ class CounterWidget : AppWidgetProvider() {
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        for (id in appWidgetIds) Store.deleteCounter(context, id)
+        for (id in appWidgetIds) Store.clearCounterTarget(context, id)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -35,16 +35,22 @@ class CounterWidget : AppWidgetProvider() {
             AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID
         )
         if (id == AppWidgetManager.INVALID_APPWIDGET_ID) return
-        val step = Store.getCounterStep(context, id)
-        val delta = if (action == ACTION_INC) step else -step
-        Store.setCounterValue(context, id, Store.getCounterValue(context, id) + delta)
+        Store.resolveCounterForWidget(context, id)?.let { entry ->
+            Store.adjustCounterEntry(context, entry.id, if (action == ACTION_INC) 1 else -1)
+        }
         render(context, AppWidgetManager.getInstance(context), id)
     }
 
     private fun render(context: Context, mgr: AppWidgetManager, id: Int) {
         val views = RemoteViews(context.packageName, R.layout.counter_widget)
-        views.setTextViewText(R.id.counter_label, Store.getCounterLabel(context, id))
-        views.setTextViewText(R.id.counter_value, Store.getCounterValue(context, id).toString())
+        val entry = Store.resolveCounterForWidget(context, id)
+        if (entry == null) {
+            views.setTextViewText(R.id.counter_label, context.getString(R.string.widget_pick))
+            views.setTextViewText(R.id.counter_value, "–")
+        } else {
+            views.setTextViewText(R.id.counter_label, entry.name)
+            views.setTextViewText(R.id.counter_value, entry.value.toString())
+        }
         views.setOnClickPendingIntent(R.id.counter_plus, buttonIntent(context, ACTION_INC, id))
         views.setOnClickPendingIntent(R.id.counter_minus, buttonIntent(context, ACTION_DEC, id))
         views.setOnClickPendingIntent(R.id.counter_label, editIntent(context, id))

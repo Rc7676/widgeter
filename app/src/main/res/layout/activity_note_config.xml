@@ -28,42 +28,43 @@
             android:paddingHorizontal="16dp">
 
             <com.google.android.material.card.MaterialCardView style="@style/Card">
-
                 <LinearLayout style="@style/CardInner">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/cfg_name"
-                        app:helperText="@string/cfg_note_name_hint">
+                        android:text="@string/cfg_which_note"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="14sp" />
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/cfg_name_input"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text|textCapWords"
-                            android:maxLines="1"
-                            android:importantForAutofill="no" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    <RadioGroup
+                        android:id="@+id/cfg_choices"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="@string/cfg_note_text">
+                        android:layout_marginTop="8dp" />
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/cfg_text_input"
+                    <LinearLayout
+                        android:id="@+id/cfg_new_fields"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="top"
-                            android:inputType="textMultiLine|textCapSentences"
-                            android:minLines="4"
-                            android:maxLines="12"
-                            android:importantForAutofill="no" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:hint="@string/cfg_name">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/cfg_name_input"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="text|textCapWords"
+                                android:maxLines="1"
+                                android:importantForAutofill="no" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/cfg_save"
