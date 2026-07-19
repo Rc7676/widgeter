@@ -13,6 +13,8 @@ import java.time.LocalDate
 data class NoteEntry(val id: Long, val name: String, val text: String, val time: Long)
 data class CounterEntry(val id: Long, val name: String, val value: Int, val step: Int)
 data class CountdownEntry(val id: Long, val name: String, val date: Long) // date = epoch day, 0 = unset
+data class HabitEntry(val id: Long, val name: String, val streak: Int, val last: Long) // last = epoch day
+data class WaterEntry(val id: Long, val name: String, val count: Int, val goal: Int, val day: Long)
 
 /** A single to-do entry with a stable id (so toggles never hit the wrong row). */
 data class TodoItem(
@@ -358,6 +360,143 @@ object Store {
         val list = getCountdownList(c)
         list.add(index.coerceIn(0, list.size), entry)
         saveCountdownList(c, list)
+    }
+
+    private const val KEY_HABITS = "habits_list"
+    private const val KEY_WATERS = "waters_list"
+
+    // ---- Habits collection ----
+    fun getHabitEntries(c: Context): MutableList<HabitEntry> {
+        val raw = prefs(c).getString(KEY_HABITS, null) ?: return mutableListOf()
+        return try {
+            val arr = JSONArray(raw)
+            MutableList(arr.length()) { i ->
+                val o = arr.getJSONObject(i)
+                HabitEntry(o.getLong("id"), o.optString("n", "Habit"), o.optInt("s", 0), o.optLong("l", 0L))
+            }
+        } catch (e: Exception) { mutableListOf() }
+    }
+
+    private fun saveHabitEntries(c: Context, list: List<HabitEntry>) {
+        val arr = JSONArray()
+        for (e in list) arr.put(JSONObject().put("id", e.id).put("n", e.name).put("s", e.streak).put("l", e.last))
+        prefs(c).edit().putString(KEY_HABITS, arr.toString()).apply()
+    }
+
+    fun addHabitEntry(c: Context, name: String): HabitEntry {
+        val list = getHabitEntries(c)
+        val entry = HabitEntry(nextId(c), name.ifBlank { "Habit" }, 0, 0L)
+        list.add(entry); saveHabitEntries(c, list); return entry
+    }
+
+    fun renameHabitEntry(c: Context, id: Long, name: String) {
+        val list = getHabitEntries(c)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx >= 0) { list[idx] = list[idx].copy(name = name.ifBlank { "Habit" }); saveHabitEntries(c, list) }
+    }
+
+    fun removeHabitEntry(c: Context, id: Long) {
+        val list = getHabitEntries(c)
+        if (list.removeAll { it.id == id }) saveHabitEntries(c, list)
+    }
+
+    fun restoreHabitEntry(c: Context, entry: HabitEntry, index: Int) {
+        val list = getHabitEntries(c); list.add(index.coerceIn(0, list.size), entry); saveHabitEntries(c, list)
+    }
+
+    fun checkInHabitEntry(c: Context, id: Long) {
+        val list = getHabitEntries(c)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx < 0) return
+        val e = list[idx]; val t = today()
+        if (e.last == t) return
+        val newStreak = if (e.last == t - 1) e.streak + 1 else 1
+        list[idx] = e.copy(streak = newStreak, last = t); saveHabitEntries(c, list)
+    }
+
+    fun habitLiveStreak(entry: HabitEntry): Int {
+        val t = today()
+        return if (entry.last == t || entry.last == t - 1) entry.streak else 0
+    }
+
+    fun habitDoneTodayEntry(entry: HabitEntry): Boolean = entry.last == today()
+
+    fun topHabitStreak(c: Context): Int = getHabitEntries(c).maxOfOrNull { habitLiveStreak(it) } ?: 0
+
+    /** First habit for widgets, migrating the old single habit if present. */
+    fun resolveHabitPrimary(c: Context): HabitEntry? {
+        val list = getHabitEntries(c)
+        if (list.isNotEmpty()) return list.first()
+        val legacyLast = getHabitLast(c)
+        val legacyStreak = prefs(c).getInt("habit_streak", 0)
+        if (legacyLast > 0 || legacyStreak > 0) {
+            val e = HabitEntry(nextId(c), "Habit", legacyStreak, legacyLast)
+            saveHabitEntries(c, mutableListOf(e)); return e
+        }
+        return null
+    }
+
+    // ---- Waters collection ----
+    fun getWaterEntries(c: Context): MutableList<WaterEntry> {
+        val raw = prefs(c).getString(KEY_WATERS, null) ?: return mutableListOf()
+        return try {
+            val arr = JSONArray(raw)
+            MutableList(arr.length()) { i ->
+                val o = arr.getJSONObject(i)
+                WaterEntry(o.getLong("id"), o.optString("n", "Water"), o.optInt("c", 0), o.optInt("g", 8), o.optLong("d", 0L))
+            }
+        } catch (e: Exception) { mutableListOf() }
+    }
+
+    private fun saveWaterEntries(c: Context, list: List<WaterEntry>) {
+        val arr = JSONArray()
+        for (e in list) arr.put(JSONObject().put("id", e.id).put("n", e.name).put("c", e.count).put("g", e.goal).put("d", e.day))
+        prefs(c).edit().putString(KEY_WATERS, arr.toString()).apply()
+    }
+
+    fun addWaterEntry(c: Context, name: String, goal: Int): WaterEntry {
+        val list = getWaterEntries(c)
+        val entry = WaterEntry(nextId(c), name.ifBlank { "Water" }, 0, goal.coerceAtLeast(1), today())
+        list.add(entry); saveWaterEntries(c, list); return entry
+    }
+
+    fun renameWaterEntry(c: Context, id: Long, name: String, goal: Int) {
+        val list = getWaterEntries(c)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx >= 0) { list[idx] = list[idx].copy(name = name.ifBlank { "Water" }, goal = goal.coerceAtLeast(1)); saveWaterEntries(c, list) }
+    }
+
+    fun removeWaterEntry(c: Context, id: Long) {
+        val list = getWaterEntries(c)
+        if (list.removeAll { it.id == id }) saveWaterEntries(c, list)
+    }
+
+    fun restoreWaterEntry(c: Context, entry: WaterEntry, index: Int) {
+        val list = getWaterEntries(c); list.add(index.coerceIn(0, list.size), entry); saveWaterEntries(c, list)
+    }
+
+    fun adjustWaterEntry(c: Context, id: Long, delta: Int) {
+        val list = getWaterEntries(c)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx < 0) return
+        val e = list[idx]; val t = today()
+        val base = if (e.day == t) e.count else 0
+        list[idx] = e.copy(count = (base + delta).coerceIn(0, 99), day = t); saveWaterEntries(c, list)
+    }
+
+    fun waterEntryCount(entry: WaterEntry): Int = if (entry.day == today()) entry.count else 0
+
+    /** First water tracker for widgets, migrating the old single tracker if present. */
+    fun resolveWaterPrimary(c: Context): WaterEntry? {
+        val list = getWaterEntries(c)
+        if (list.isNotEmpty()) return list.first()
+        val legacyCount = prefs(c).getInt("water_count", 0)
+        val legacyDay = prefs(c).getLong("water_day", 0L)
+        if (legacyDay > 0 || legacyCount > 0) {
+            val e = WaterEntry(nextId(c), "Water", legacyCount, getWaterGoal(c), legacyDay)
+            saveWaterEntries(c, mutableListOf(e)); return e
+        }
+        return null
     }
 
     fun findCounter(c: Context, id: Long): CounterEntry? = getCounterList(c).firstOrNull { it.id == id }

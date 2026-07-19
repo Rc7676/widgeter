@@ -81,6 +81,17 @@
     <string name="habit_checkin">Check in</string>
     <string name="habit_streak_fmt">🔥 %1$d day streak</string>
     <string name="habit_none">No streak yet — check in today</string>
+    <string name="habits_title">Habits</string>
+    <string name="waters_title">Water</string>
+    <string name="habits_empty">No habits yet. Tap Add to start a streak.</string>
+    <string name="waters_empty">No water trackers yet. Tap Add to make one.</string>
+    <string name="new_habit">New habit</string>
+    <string name="new_water">New water tracker</string>
+    <string name="water_goal_hint">Daily goal (glasses)</string>
+    <string name="habit_streak_row">🔥 %1$d day streak</string>
+    <string name="habit_done_row">✓ checked in today · %1$d day streak</string>
+    <string name="habit_none_row">Tap ✓ to check in</string>
+    <string name="water_row_sub">%1$d of %2$d glasses today</string>
     <string name="countdowns_title">Countdowns</string>
     <string name="countdowns_empty">No countdowns yet.</string>
     <string name="edit_note_title">Edit note</string>
@@ -119,6 +130,7 @@
     <string name="habit_title">Habit</string>
     <string name="habit_done">checked in today ✓</string>
     <string name="habit_todo">day streak · tap ✓</string>
+    <string name="habit_widget_empty">Add a habit in the app</string>
     <string name="water_title">Water</string>
     <string name="countdown_title">Countdown</string>
     <string name="countdown_until">days until</string>

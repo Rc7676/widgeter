@@ -195,7 +195,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.stat_notes).text = list.size.toString()
         findViewById<TextView>(R.id.stat_counters).text = Store.getCounterList(this).size.toString()
         findViewById<TextView>(R.id.stat_tasks).text = Store.getTodos(this).count { !it.done }.toString()
-        findViewById<TextView>(R.id.stat_streak).text = Store.habitStreak(this).toString()
+        findViewById<TextView>(R.id.stat_streak).text = Store.topHabitStreak(this).toString()
     }
 
     private fun greeting(): String = when (LocalTime.now().hour) {
@@ -396,26 +396,124 @@ class MainActivity : AppCompatActivity() {
     // ---------------- More ----------------
 
     private fun setupMore() {
-        findViewById<MaterialButton>(R.id.habit_checkin_btn).setOnClickListener {
-            Store.checkInHabit(this); afterChange(); renderMore()
-        }
-        findViewById<MaterialButton>(R.id.water_plus_btn).setOnClickListener {
-            Store.addWater(this, 1); afterChange(); renderMore()
-        }
-        findViewById<MaterialButton>(R.id.water_minus_btn).setOnClickListener {
-            Store.addWater(this, -1); afterChange(); renderMore()
-        }
+        findViewById<MaterialButton>(R.id.habit_add_btn).setOnClickListener { habitDialog(null) }
+        findViewById<MaterialButton>(R.id.water_add_btn).setOnClickListener { waterDialog(null) }
         findViewById<MaterialButton>(R.id.countdown_add_btn).setOnClickListener { countdownDialog(null) }
         findViewById<MaterialButton>(R.id.more_settings_btn).setOnClickListener { openSettings() }
     }
 
     private fun renderMore() {
-        val streak = Store.habitStreak(this)
-        findViewById<TextView>(R.id.habit_streak_text).text =
-            if (streak > 0) getString(R.string.habit_streak_fmt, streak) else getString(R.string.habit_none)
-        findViewById<TextView>(R.id.water_count_text).text =
-            "${Store.getWaterCount(this)}/${Store.getWaterGoal(this)}"
+        renderHabits()
+        renderWaters()
+        renderCountdowns()
+    }
 
+    // ---- Habits ----
+    private fun renderHabits() {
+        val container = findViewById<LinearLayout>(R.id.habits_container)
+        container.removeAllViews()
+        val list = Store.getHabitEntries(this)
+        findViewById<View>(R.id.habits_empty).visibility =
+            if (list.isEmpty()) View.VISIBLE else View.GONE
+        for (h in list) {
+            val row = LayoutInflater.from(this).inflate(R.layout.item_habit_row, container, false)
+            row.findViewById<TextView>(R.id.habit_row_name).text = h.name
+            val streak = Store.habitLiveStreak(h)
+            row.findViewById<TextView>(R.id.habit_row_sub).text = when {
+                Store.habitDoneTodayEntry(h) -> getString(R.string.habit_done_row, streak)
+                streak > 0 -> getString(R.string.habit_streak_row, streak)
+                else -> getString(R.string.habit_none_row)
+            }
+            row.findViewById<MaterialButton>(R.id.habit_row_checkin).setOnClickListener {
+                Store.checkInHabitEntry(this, h.id); afterChange(); renderMore(); refreshHeroStreak()
+            }
+            row.setOnClickListener { habitDialog(h) }
+            row.findViewById<ImageButton>(R.id.habit_row_delete).setOnClickListener { deleteHabitWithUndo(h) }
+            container.addView(row)
+        }
+    }
+
+    private fun habitDialog(entry: HabitEntry?) {
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_name, null)
+        val name = view.findViewById<TextInputEditText>(R.id.dlg_name)
+        name.setText(entry?.name ?: "")
+        MaterialAlertDialogBuilder(this)
+            .setTitle(if (entry == null) R.string.new_habit else R.string.rename)
+            .setView(view)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.save_generic) { _, _ ->
+                val nm = name.text?.toString().orEmpty()
+                if (entry == null) Store.addHabitEntry(this, nm) else Store.renameHabitEntry(this, entry.id, nm)
+                afterChange(); renderMore(); refreshHeroStreak()
+            }
+            .show()
+    }
+
+    private fun deleteHabitWithUndo(entry: HabitEntry) {
+        val index = Store.getHabitEntries(this).indexOfFirst { it.id == entry.id }.coerceAtLeast(0)
+        Store.removeHabitEntry(this, entry.id); afterChange(); renderMore(); refreshHeroStreak()
+        Snackbar.make(findViewById(R.id.root), R.string.item_deleted, Snackbar.LENGTH_LONG)
+            .setAction(R.string.undo) { Store.restoreHabitEntry(this, entry, index); afterChange(); renderMore(); refreshHeroStreak() }
+            .show()
+    }
+
+    // ---- Water ----
+    private fun renderWaters() {
+        val container = findViewById<LinearLayout>(R.id.waters_container)
+        container.removeAllViews()
+        val list = Store.getWaterEntries(this)
+        findViewById<View>(R.id.waters_empty).visibility =
+            if (list.isEmpty()) View.VISIBLE else View.GONE
+        for (w in list) {
+            val row = LayoutInflater.from(this).inflate(R.layout.item_water_row, container, false)
+            row.findViewById<TextView>(R.id.water_row_name).text = w.name
+            row.findViewById<TextView>(R.id.water_row_sub).text =
+                getString(R.string.water_row_sub, Store.waterEntryCount(w), w.goal)
+            row.findViewById<MaterialButton>(R.id.water_row_minus).setOnClickListener {
+                Store.adjustWaterEntry(this, w.id, -1); afterChange(); renderWaters()
+            }
+            row.findViewById<MaterialButton>(R.id.water_row_plus).setOnClickListener {
+                Store.adjustWaterEntry(this, w.id, 1); afterChange(); renderWaters()
+            }
+            row.setOnClickListener { waterDialog(w) }
+            row.findViewById<ImageButton>(R.id.water_row_delete).setOnClickListener { deleteWaterWithUndo(w) }
+            container.addView(row)
+        }
+    }
+
+    private fun waterDialog(entry: WaterEntry?) {
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_water, null)
+        val name = view.findViewById<TextInputEditText>(R.id.dlg_name)
+        val goal = view.findViewById<TextInputEditText>(R.id.dlg_goal)
+        name.setText(entry?.name ?: "")
+        goal.setText((entry?.goal ?: 8).toString())
+        MaterialAlertDialogBuilder(this)
+            .setTitle(if (entry == null) R.string.new_water else R.string.rename)
+            .setView(view)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.save_generic) { _, _ ->
+                val nm = name.text?.toString().orEmpty()
+                val g = goal.text?.toString()?.trim()?.toIntOrNull()?.coerceAtLeast(1) ?: 8
+                if (entry == null) Store.addWaterEntry(this, nm, g) else Store.renameWaterEntry(this, entry.id, nm, g)
+                afterChange(); renderWaters()
+            }
+            .show()
+    }
+
+    private fun deleteWaterWithUndo(entry: WaterEntry) {
+        val index = Store.getWaterEntries(this).indexOfFirst { it.id == entry.id }.coerceAtLeast(0)
+        Store.removeWaterEntry(this, entry.id); afterChange(); renderWaters()
+        Snackbar.make(findViewById(R.id.root), R.string.item_deleted, Snackbar.LENGTH_LONG)
+            .setAction(R.string.undo) { Store.restoreWaterEntry(this, entry, index); afterChange(); renderWaters() }
+            .show()
+    }
+
+    private fun refreshHeroStreak() {
+        findViewById<TextView>(R.id.stat_streak).text = Store.topHabitStreak(this).toString()
+    }
+
+    // ---- Countdowns ----
+    private fun renderCountdowns() {
         val container = findViewById<LinearLayout>(R.id.countdowns_container)
         container.removeAllViews()
         val list = Store.getCountdownList(this)

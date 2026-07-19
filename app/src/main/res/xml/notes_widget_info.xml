@@ -11,7 +11,6 @@
     android:updatePeriodMillis="0"
     android:initialLayout="@layout/notes_widget"
     android:previewLayout="@layout/notes_widget"
-    android:configure="com.widgeter.app.NoteConfigActivity"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
     android:description="@string/widget_desc_notes" />
