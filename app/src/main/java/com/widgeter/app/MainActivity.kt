@@ -25,6 +25,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var taskInput: TextInputEditText
 
     private val dateFmt: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
+    private val heroDateFmt: DateTimeFormatter = DateTimeFormatter.ofPattern("EEEE, MMM d")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -96,7 +98,7 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_counters -> getString(R.string.section_counter)
             R.id.nav_tasks -> getString(R.string.tasks_title)
             R.id.nav_more -> getString(R.string.more_title)
-            else -> getString(R.string.section_note)
+            else -> "" // Notes page uses the hero header as its title
         }
         when (itemId) {
             R.id.nav_counters -> renderCounters()
@@ -126,8 +128,24 @@ class MainActivity : AppCompatActivity() {
     private fun renderNotes() {
         val list = Store.getNoteList(this)
         notesAdapter.submit(list)
+        findViewById<View>(R.id.notes_recycler).visibility =
+            if (list.isEmpty()) View.GONE else View.VISIBLE
         findViewById<View>(R.id.notes_empty).visibility =
             if (list.isEmpty()) View.VISIBLE else View.GONE
+
+        findViewById<TextView>(R.id.hero_greeting).text = greeting()
+        findViewById<TextView>(R.id.hero_date).text = LocalDate.now().format(heroDateFmt)
+        findViewById<TextView>(R.id.stat_notes).text = list.size.toString()
+        findViewById<TextView>(R.id.stat_counters).text = Store.getCounterList(this).size.toString()
+        findViewById<TextView>(R.id.stat_tasks).text = Store.getTodos(this).count { !it.done }.toString()
+        findViewById<TextView>(R.id.stat_streak).text = Store.habitStreak(this).toString()
+    }
+
+    private fun greeting(): String = when (LocalTime.now().hour) {
+        in 5..11 -> "Good morning 👋"
+        in 12..16 -> "Good afternoon 👋"
+        in 17..20 -> "Good evening 👋"
+        else -> "Good night 🌙"
     }
 
     private fun editNoteDialog(entry: NoteEntry) {

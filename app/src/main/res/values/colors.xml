@@ -23,6 +23,13 @@
     <color name="widget_accent_container">#EADDFF</color>
     <color name="widget_on_accent_container">#21005D</color>
 
+    <!-- Hero gradient + stat tiles (apply in both light and dark) -->
+    <color name="grad_start">#7C5CFF</color>
+    <color name="grad_mid">#6750A4</color>
+    <color name="grad_end">#4B3593</color>
+    <color name="on_hero">#FFFFFF</color>
+    <color name="hero_tile">#26FFFFFF</color>
+
     <!-- Priority (apply in both light and dark) -->
     <color name="prio_none">#00000000</color>
     <color name="prio_low">#43A047</color>

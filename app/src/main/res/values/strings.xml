@@ -53,6 +53,12 @@
     <string name="onboarding_body">You get four home-screen widgets:\n\n⏰  Clock — time, date &amp; a greeting\n📝  Note — a quick note you can edit\n🔢  Counter — tap + and − to count anything\n✅  To-do — a checklist you tick off\n\nTo add one: long-press your home screen → Widgets → Widgeter.</string>
     <string name="onboarding_got_it">Got it</string>
 
+    <!-- Home hero stats -->
+    <string name="stat_notes">Notes</string>
+    <string name="stat_counters">Counters</string>
+    <string name="stat_tasks">Tasks</string>
+    <string name="stat_streak">Streak</string>
+
     <!-- Navigation / pages -->
     <string name="tasks_title">Tasks</string>
     <string name="more_title">More</string>
