@@ -36,7 +36,8 @@ class WidgetGalleryActivity : AppCompatActivity() {
         WidgetInfo(QuoteWidget::class.java, R.string.quote_title, R.string.widget_desc_quote),
         WidgetInfo(RandomWidget::class.java, R.string.random_title, R.string.widget_desc_random),
         WidgetInfo(BatteryWidget::class.java, R.string.battery_title, R.string.widget_desc_battery),
-        WidgetInfo(WorldClockWidget::class.java, R.string.worldclock_title, R.string.widget_desc_worldclock)
+        WidgetInfo(WorldClockWidget::class.java, R.string.worldclock_title, R.string.widget_desc_worldclock),
+        WidgetInfo(PomodoroWidget::class.java, R.string.pomodoro_title, R.string.widget_desc_pomodoro)
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

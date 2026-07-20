@@ -752,6 +752,62 @@ object Store {
         am.cancel(timerAlarmIntent(c))
     }
 
+    // ===================== Pomodoro =====================
+    const val POMO_FOCUS_MS = 25 * 60_000L
+    const val POMO_BREAK_MS = 5 * 60_000L
+
+    /** 0 = focus, 1 = break. */
+    fun pomoPhase(c: Context): Int = prefs(c).getInt("pomo_phase", 0)
+    fun pomoOnBreak(c: Context): Boolean = pomoPhase(c) == 1
+    fun pomoDuration(c: Context): Long = if (pomoOnBreak(c)) POMO_BREAK_MS else POMO_FOCUS_MS
+    fun pomoRunning(c: Context): Boolean = prefs(c).getBoolean("pomo_running", false)
+    fun pomoCount(c: Context): Int = prefs(c).getInt("pomo_count", 0)
+    fun pomoPhaseLabel(c: Context): String = if (pomoOnBreak(c)) "Break" else "Focus"
+
+    fun pomoRemaining(c: Context): Long {
+        return if (pomoRunning(c))
+            (prefs(c).getLong("pomo_end", 0L) - android.os.SystemClock.elapsedRealtime()).coerceAtLeast(0L)
+        else prefs(c).getLong("pomo_remain", pomoDuration(c))
+    }
+
+    /** Chronometer base for count-down (elapsedRealtime the phase hits zero). */
+    fun pomoBase(c: Context): Long {
+        return if (pomoRunning(c)) prefs(c).getLong("pomo_end", 0L)
+        else android.os.SystemClock.elapsedRealtime() + pomoRemaining(c)
+    }
+
+    fun startPomo(c: Context) {
+        if (pomoRunning(c)) return
+        var remain = prefs(c).getLong("pomo_remain", pomoDuration(c))
+        if (remain <= 0L) remain = pomoDuration(c)
+        val end = android.os.SystemClock.elapsedRealtime() + remain
+        prefs(c).edit().putLong("pomo_end", end).putBoolean("pomo_running", true).apply()
+    }
+
+    fun pausePomo(c: Context) {
+        if (!pomoRunning(c)) return
+        val remain = (prefs(c).getLong("pomo_end", 0L) - android.os.SystemClock.elapsedRealtime()).coerceAtLeast(0L)
+        prefs(c).edit().putLong("pomo_remain", remain).putBoolean("pomo_running", false).apply()
+    }
+
+    fun togglePomo(c: Context) { if (pomoRunning(c)) pausePomo(c) else startPomo(c) }
+
+    /** Skip to the next phase: focus -> break (counts a session), break -> focus. */
+    fun nextPomoPhase(c: Context) {
+        val ed = prefs(c).edit()
+        if (!pomoOnBreak(c)) {
+            ed.putInt("pomo_count", pomoCount(c) + 1).putInt("pomo_phase", 1)
+        } else {
+            ed.putInt("pomo_phase", 0)
+        }
+        ed.putBoolean("pomo_running", false).remove("pomo_remain").apply()
+    }
+
+    /** Reset the current phase's countdown (keeps the phase and session count). */
+    fun resetPomo(c: Context) {
+        prefs(c).edit().putBoolean("pomo_running", false).putLong("pomo_remain", pomoDuration(c)).apply()
+    }
+
     // ===================== Quote of the day =====================
     fun quoteIndex(c: Context): Int {
         val stored = prefs(c).getInt("quote_idx", -1)
@@ -993,7 +1049,7 @@ object Widgets {
             TodoWidget::class.java, HabitWidget::class.java, WaterWidget::class.java,
             CountdownWidget::class.java, StopwatchWidget::class.java, TimerWidget::class.java,
             CalendarWidget::class.java, QuoteWidget::class.java, RandomWidget::class.java,
-            BatteryWidget::class.java, WorldClockWidget::class.java
+            BatteryWidget::class.java, WorldClockWidget::class.java, PomodoroWidget::class.java
         )
         for (cls in providers) {
             val ids = mgr.getAppWidgetIds(ComponentName(context, cls))
