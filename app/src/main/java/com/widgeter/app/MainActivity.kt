@@ -96,6 +96,9 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         if (appliedTheme != Store.getColorTheme(this)) { recreate(); return }
         renderNotes(); renderCounters(); renderTasks(); renderClock(); renderMore()
+        // Refresh home-screen widgets so info widgets (battery, moon, progress,
+        // day info, goal, …) reflect the latest state when returning to the app.
+        Widgets.refreshEverything(this)
     }
 
     private fun handleIntent(intent: Intent?) {
@@ -740,7 +743,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun afterChange() {
-        Widgets.refreshAll(this)
+        Widgets.refreshEverything(this)
     }
 
     /** Builds a row of color swatches (0 = none, 1..6 colors) into [container].
