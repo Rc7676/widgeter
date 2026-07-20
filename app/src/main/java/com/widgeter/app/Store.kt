@@ -77,6 +77,50 @@ object Store {
     fun widgetOnGrad(c: Context): Int =
         if (getColorTheme(c) == 3) 0xFF241A00.toInt() else 0xFFFFFFFF.toInt()
 
+    // ---- Backup / restore (all preferences, typed) ----
+    fun exportJson(c: Context): String {
+        val o = JSONObject()
+        for ((k, v) in prefs(c).all) {
+            val e = JSONObject()
+            when (v) {
+                is Boolean -> e.put("t", "b").put("v", v)
+                is Int -> e.put("t", "i").put("v", v)
+                is Long -> e.put("t", "l").put("v", v)
+                is Float -> e.put("t", "f").put("v", v.toDouble())
+                is String -> e.put("t", "s").put("v", v)
+                else -> continue
+            }
+            o.put(k, e)
+        }
+        return JSONObject().put("widgeter_backup", 1).put("data", o).toString()
+    }
+
+    /** Returns true on success. */
+    fun importJson(c: Context, json: String): Boolean {
+        return try {
+            val root = JSONObject(json)
+            val o = root.optJSONObject("data") ?: return false
+            val ed = prefs(c).edit()
+            ed.clear()
+            val keys = o.keys()
+            while (keys.hasNext()) {
+                val k = keys.next()
+                val e = o.getJSONObject(k)
+                when (e.getString("t")) {
+                    "b" -> ed.putBoolean(k, e.getBoolean("v"))
+                    "i" -> ed.putInt(k, e.getInt("v"))
+                    "l" -> ed.putLong(k, e.getLong("v"))
+                    "f" -> ed.putFloat(k, e.getDouble("v").toFloat())
+                    "s" -> ed.putString(k, e.getString("v"))
+                }
+            }
+            ed.apply()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     fun isOnboarded(c: Context): Boolean = prefs(c).getBoolean(KEY_ONBOARDED, false)
     fun setOnboarded(c: Context) = prefs(c).edit().putBoolean(KEY_ONBOARDED, true).apply()
 

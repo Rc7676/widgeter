@@ -36,6 +36,11 @@
             android:parentActivityName=".MainActivity" />
 
         <activity
+            android:name=".WidgetGalleryActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
             android:name=".CounterConfigActivity"
             android:exported="true"
             android:label="@string/cfg_counter_title"

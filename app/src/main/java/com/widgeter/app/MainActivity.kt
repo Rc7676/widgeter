@@ -541,6 +541,9 @@ class MainActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.habit_add_btn).setOnClickListener { habitDialog(null) }
         findViewById<MaterialButton>(R.id.water_add_btn).setOnClickListener { waterDialog(null) }
         findViewById<MaterialButton>(R.id.countdown_add_btn).setOnClickListener { countdownDialog(null) }
+        findViewById<MaterialButton>(R.id.more_widgets_btn).setOnClickListener {
+            startActivity(Intent(this, WidgetGalleryActivity::class.java))
+        }
         findViewById<MaterialButton>(R.id.more_settings_btn).setOnClickListener { openSettings() }
     }
 

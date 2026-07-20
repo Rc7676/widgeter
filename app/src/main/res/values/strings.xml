@@ -43,6 +43,14 @@
     <string name="settings_title">Settings</string>
     <string name="settings_theme">Appearance</string>
     <string name="settings_color">Accent color</string>
+    <string name="settings_data">Backup &amp; restore</string>
+    <string name="data_export">Export</string>
+    <string name="data_import">Import</string>
+    <string name="data_exported">Backup saved</string>
+    <string name="data_imported">Backup restored</string>
+    <string name="data_failed">Couldn\'t read that file</string>
+    <string name="gallery_title">Browse widgets</string>
+    <string name="gallery_manual">Long-press your home screen → Widgets → Widgeter to add it.</string>
     <string-array name="color_names">
         <item>Purple</item>
         <item>Red</item>

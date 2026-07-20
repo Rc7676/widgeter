@@ -1,13 +1,16 @@
 package com.widgeter.app
 
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
@@ -15,9 +18,18 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.button.MaterialButton
 
 /** Appearance (light/dark), accent color themes, and about. */
 class SettingsActivity : AppCompatActivity() {
+
+    private val exportLauncher = registerForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri -> uri?.let { writeExport(it) } }
+
+    private val importLauncher = registerForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri -> uri?.let { doImport(it) } }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(Themes.styleFor(this))
@@ -37,6 +49,39 @@ class SettingsActivity : AppCompatActivity() {
 
         setupAppearance()
         setupColors()
+        setupData()
+    }
+
+    private fun setupData() {
+        findViewById<MaterialButton>(R.id.btn_export).setOnClickListener {
+            exportLauncher.launch("widgeter-backup.json")
+        }
+        findViewById<MaterialButton>(R.id.btn_import).setOnClickListener {
+            importLauncher.launch(arrayOf("application/json", "text/plain", "*/*"))
+        }
+    }
+
+    private fun writeExport(uri: Uri) {
+        val ok = try {
+            contentResolver.openOutputStream(uri)?.use { it.write(Store.exportJson(this).toByteArray()) }
+            true
+        } catch (e: Exception) { false }
+        Toast.makeText(this, if (ok) R.string.data_exported else R.string.data_failed, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun doImport(uri: Uri) {
+        val json = try {
+            contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+        } catch (e: Exception) { null }
+        if (json == null || !Store.importJson(this, json)) {
+            Toast.makeText(this, R.string.data_failed, Toast.LENGTH_SHORT).show()
+            return
+        }
+        AppCompatDelegate.setDefaultNightMode(Store.getThemeMode(this))
+        Store.rescheduleAllAlarms(this)
+        Widgets.refreshEverything(this)
+        Toast.makeText(this, R.string.data_imported, Toast.LENGTH_SHORT).show()
+        recreate()
     }
 
     private fun setupAppearance() {

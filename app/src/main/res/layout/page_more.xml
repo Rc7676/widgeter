@@ -143,11 +143,20 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/more_settings_btn"
+            android:id="@+id/more_widgets_btn"
             style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:text="@string/gallery_title"
+            app:icon="@drawable/ic_more" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/more_settings_btn"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/settings_title"
             app:icon="@drawable/ic_settings" />
 
