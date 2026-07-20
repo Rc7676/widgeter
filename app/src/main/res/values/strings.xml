@@ -194,6 +194,14 @@
     <string name="widget_desc_quote">A quote you can shuffle</string>
     <string name="widget_desc_random">Coin flip, dice or a number</string>
 
+    <!-- Battery widget -->
+    <string name="battery_title">Battery</string>
+    <string name="battery_hint">tap to refresh</string>
+    <string name="battery_charging">Charging</string>
+    <string name="battery_low">Battery low</string>
+    <string name="battery_ok">On battery</string>
+    <string name="widget_desc_battery">Battery level with a bar</string>
+
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>
     <string name="widget_desc_notes">A quick note on your home screen</string>

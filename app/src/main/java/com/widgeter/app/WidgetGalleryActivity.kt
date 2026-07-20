@@ -34,7 +34,8 @@ class WidgetGalleryActivity : AppCompatActivity() {
         WidgetInfo(TimerWidget::class.java, R.string.timer_title, R.string.widget_desc_timer),
         WidgetInfo(CalendarWidget::class.java, R.string.calendar_title, R.string.widget_desc_calendar),
         WidgetInfo(QuoteWidget::class.java, R.string.quote_title, R.string.widget_desc_quote),
-        WidgetInfo(RandomWidget::class.java, R.string.random_title, R.string.widget_desc_random)
+        WidgetInfo(RandomWidget::class.java, R.string.random_title, R.string.widget_desc_random),
+        WidgetInfo(BatteryWidget::class.java, R.string.battery_title, R.string.widget_desc_battery)
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
