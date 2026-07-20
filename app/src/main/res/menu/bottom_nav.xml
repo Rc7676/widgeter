@@ -13,6 +13,10 @@
         android:icon="@drawable/ic_checklist"
         android:title="@string/tasks_title" />
     <item
+        android:id="@+id/nav_clock"
+        android:icon="@drawable/ic_clock"
+        android:title="@string/clock_title" />
+    <item
         android:id="@+id/nav_more"
         android:icon="@drawable/ic_more"
         android:title="@string/more_title" />

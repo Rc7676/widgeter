@@ -499,6 +499,102 @@ object Store {
         return null
     }
 
+    // ===================== Stopwatch =====================
+    fun stopwatchRunning(c: Context): Boolean = prefs(c).getBoolean("sw_running", false)
+
+    /** Chronometer base (elapsedRealtime reference): running counts up from it. */
+    fun stopwatchBase(c: Context): Long {
+        return if (stopwatchRunning(c)) prefs(c).getLong("sw_base", android.os.SystemClock.elapsedRealtime())
+        else android.os.SystemClock.elapsedRealtime() - prefs(c).getLong("sw_accum", 0L)
+    }
+
+    fun startStopwatch(c: Context) {
+        if (stopwatchRunning(c)) return
+        val base = android.os.SystemClock.elapsedRealtime() - prefs(c).getLong("sw_accum", 0L)
+        prefs(c).edit().putLong("sw_base", base).putBoolean("sw_running", true).apply()
+    }
+
+    fun pauseStopwatch(c: Context) {
+        if (!stopwatchRunning(c)) return
+        val accum = android.os.SystemClock.elapsedRealtime() - prefs(c).getLong("sw_base", 0L)
+        prefs(c).edit().putLong("sw_accum", accum).putBoolean("sw_running", false).apply()
+    }
+
+    fun resetStopwatch(c: Context) {
+        prefs(c).edit().putBoolean("sw_running", false).putLong("sw_accum", 0L).putLong("sw_base", 0L).apply()
+    }
+
+    // ===================== Timer =====================
+    fun timerRunning(c: Context): Boolean = prefs(c).getBoolean("t_running", false)
+    fun timerDuration(c: Context): Long = prefs(c).getLong("t_dur", 5 * 60_000L)
+    fun timerRemaining(c: Context): Long {
+        return if (timerRunning(c)) (prefs(c).getLong("t_end", 0L) - android.os.SystemClock.elapsedRealtime()).coerceAtLeast(0L)
+        else prefs(c).getLong("t_remain", timerDuration(c))
+    }
+
+    /** Chronometer base for count-down (the elapsedRealtime the timer hits zero). */
+    fun timerBase(c: Context): Long {
+        return if (timerRunning(c)) prefs(c).getLong("t_end", 0L)
+        else android.os.SystemClock.elapsedRealtime() + timerRemaining(c)
+    }
+
+    fun setTimerDuration(c: Context, ms: Long) {
+        val d = ms.coerceAtLeast(1000L)
+        prefs(c).edit().putLong("t_dur", d).apply()
+        if (!timerRunning(c)) prefs(c).edit().putLong("t_remain", d).apply()
+    }
+
+    fun startTimer(c: Context) {
+        if (timerRunning(c)) return
+        var remain = prefs(c).getLong("t_remain", timerDuration(c))
+        if (remain <= 0L) remain = timerDuration(c)
+        val end = android.os.SystemClock.elapsedRealtime() + remain
+        prefs(c).edit().putLong("t_end", end).putBoolean("t_running", true).apply()
+        scheduleTimerAlarm(c, end)
+    }
+
+    fun pauseTimer(c: Context) {
+        if (!timerRunning(c)) return
+        val remain = (prefs(c).getLong("t_end", 0L) - android.os.SystemClock.elapsedRealtime()).coerceAtLeast(0L)
+        prefs(c).edit().putLong("t_remain", remain).putBoolean("t_running", false).apply()
+        cancelTimerAlarm(c)
+    }
+
+    fun resetTimer(c: Context) {
+        prefs(c).edit().putBoolean("t_running", false).putLong("t_remain", timerDuration(c)).apply()
+        cancelTimerAlarm(c)
+    }
+
+    /** Called by TimerReceiver when the countdown reaches zero. */
+    fun onTimerFinished(c: Context) {
+        prefs(c).edit().putBoolean("t_running", false).putLong("t_remain", 0L).apply()
+    }
+
+    private fun timerAlarmIntent(c: Context): PendingIntent {
+        val intent = Intent(c, TimerReceiver::class.java)
+        return PendingIntent.getBroadcast(
+            c, 9100, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+    private fun scheduleTimerAlarm(c: Context, triggerElapsed: Long) {
+        val am = c.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
+        try {
+            am.setExactAndAllowWhileIdle(
+                android.app.AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerElapsed, timerAlarmIntent(c)
+            )
+        } catch (e: SecurityException) {
+            am.setAndAllowWhileIdle(
+                android.app.AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerElapsed, timerAlarmIntent(c)
+            )
+        }
+    }
+
+    private fun cancelTimerAlarm(c: Context) {
+        val am = c.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
+        am.cancel(timerAlarmIntent(c))
+    }
+
     fun findCounter(c: Context, id: Long): CounterEntry? = getCounterList(c).firstOrNull { it.id == id }
     fun findNote(c: Context, id: Long): NoteEntry? = getNoteList(c).firstOrNull { it.id == id }
 

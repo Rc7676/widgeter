@@ -23,6 +23,7 @@
         <include layout="@layout/page_notes" />
         <include layout="@layout/page_counters" />
         <include layout="@layout/page_tasks" />
+        <include layout="@layout/page_clock" />
         <include layout="@layout/page_more" />
     </FrameLayout>
 

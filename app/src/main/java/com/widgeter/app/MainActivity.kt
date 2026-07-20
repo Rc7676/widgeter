@@ -1,9 +1,12 @@
 package com.widgeter.app
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Chronometer
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -67,7 +70,9 @@ class MainActivity : AppCompatActivity() {
         setupNotes()
         setupCounters()
         setupTasks()
+        setupClock()
         setupMore()
+        requestNotifPermission()
 
         nav = findViewById(R.id.bottom_nav)
         nav.setOnItemSelectedListener { showPage(it.itemId); true }
@@ -86,7 +91,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (appliedTheme != Store.getColorTheme(this)) { recreate(); return }
-        renderNotes(); renderCounters(); renderTasks(); renderMore()
+        renderNotes(); renderCounters(); renderTasks(); renderClock(); renderMore()
     }
 
     private fun handleIntent(intent: Intent?) {
@@ -148,18 +153,22 @@ class MainActivity : AppCompatActivity() {
             if (itemId == R.id.nav_counters) View.VISIBLE else View.GONE
         findViewById<View>(R.id.page_tasks_root).visibility =
             if (itemId == R.id.nav_tasks) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.page_clock_root).visibility =
+            if (itemId == R.id.nav_clock) View.VISIBLE else View.GONE
         findViewById<View>(R.id.page_more_root).visibility =
             if (itemId == R.id.nav_more) View.VISIBLE else View.GONE
 
         toolbar.title = when (itemId) {
             R.id.nav_counters -> getString(R.string.section_counter)
             R.id.nav_tasks -> getString(R.string.tasks_title)
+            R.id.nav_clock -> getString(R.string.clock_title)
             R.id.nav_more -> getString(R.string.more_title)
             else -> getString(R.string.app_name) // Notes/home
         }
         when (itemId) {
             R.id.nav_counters -> renderCounters()
             R.id.nav_tasks -> renderTasks()
+            R.id.nav_clock -> renderClock()
             R.id.nav_more -> renderMore()
             else -> renderNotes()
         }
@@ -391,6 +400,75 @@ class MainActivity : AppCompatActivity() {
                 Repo.updateTodo(item.id, name.text?.toString().orEmpty(), priority, due); renderTasks()
             }
             .show()
+    }
+
+    // ---------------- Clock (stopwatch + timer) ----------------
+
+    private fun setupClock() {
+        findViewById<MaterialButton>(R.id.sw_toggle_btn).setOnClickListener {
+            if (Store.stopwatchRunning(this)) Store.pauseStopwatch(this) else Store.startStopwatch(this)
+            refreshWidget(StopwatchWidget::class.java); renderClock()
+        }
+        findViewById<MaterialButton>(R.id.sw_reset_btn).setOnClickListener {
+            Store.resetStopwatch(this); refreshWidget(StopwatchWidget::class.java); renderClock()
+        }
+        findViewById<MaterialButton>(R.id.t_toggle_btn).setOnClickListener {
+            if (Store.timerRunning(this)) Store.pauseTimer(this) else Store.startTimer(this)
+            refreshWidget(TimerWidget::class.java); renderClock()
+        }
+        findViewById<MaterialButton>(R.id.t_reset_btn).setOnClickListener {
+            Store.resetTimer(this); refreshWidget(TimerWidget::class.java); renderClock()
+        }
+        val presets = mapOf(R.id.preset_1 to 1L, R.id.preset_5 to 5L, R.id.preset_10 to 10L, R.id.preset_25 to 25L)
+        for ((viewId, minutes) in presets) {
+            findViewById<MaterialButton>(viewId).setOnClickListener {
+                Store.setTimerDuration(this, minutes * 60_000L)
+                Store.resetTimer(this)
+                refreshWidget(TimerWidget::class.java); renderClock()
+            }
+        }
+    }
+
+    private fun renderClock() {
+        val swRunning = Store.stopwatchRunning(this)
+        findViewById<Chronometer>(R.id.sw_chrono_app).apply {
+            isCountDown = false
+            base = Store.stopwatchBase(this@MainActivity)
+            if (swRunning) start() else stop()
+        }
+        findViewById<MaterialButton>(R.id.sw_toggle_btn).apply {
+            setText(if (swRunning) R.string.pause else R.string.start)
+            setIconResource(if (swRunning) R.drawable.ic_pause else R.drawable.ic_play)
+        }
+
+        val tRunning = Store.timerRunning(this)
+        findViewById<Chronometer>(R.id.t_chrono_app).apply {
+            isCountDown = true
+            base = Store.timerBase(this@MainActivity)
+            if (tRunning) start() else stop()
+        }
+        findViewById<MaterialButton>(R.id.t_toggle_btn).apply {
+            setText(if (tRunning) R.string.pause else R.string.start)
+            setIconResource(if (tRunning) R.drawable.ic_pause else R.drawable.ic_play)
+        }
+    }
+
+    private fun refreshWidget(cls: Class<*>) {
+        val mgr = AppWidgetManager.getInstance(this)
+        val ids = mgr.getAppWidgetIds(ComponentName(this, cls))
+        if (ids.isNotEmpty()) sendBroadcast(Intent(this, cls).apply {
+            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        })
+    }
+
+    private fun requestNotifPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) !=
+            android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 42)
+        }
     }
 
     // ---------------- More ----------------
