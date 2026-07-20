@@ -10,10 +10,10 @@ import org.json.JSONObject
 import java.time.LocalDate
 
 /** App-managed collection entries (the in-app pages). */
-data class NoteEntry(val id: Long, val name: String, val text: String, val time: Long)
-data class CounterEntry(val id: Long, val name: String, val value: Int, val step: Int)
+data class NoteEntry(val id: Long, val name: String, val text: String, val time: Long, val color: Int = 0)
+data class CounterEntry(val id: Long, val name: String, val value: Int, val step: Int, val color: Int = 0)
 data class CountdownEntry(val id: Long, val name: String, val date: Long) // date = epoch day, 0 = unset
-data class HabitEntry(val id: Long, val name: String, val streak: Int, val last: Long) // last = epoch day
+data class HabitEntry(val id: Long, val name: String, val streak: Int, val last: Long, val color: Int = 0) // last = epoch day
 data class WaterEntry(val id: Long, val name: String, val count: Int, val goal: Int, val day: Long)
 data class AlarmEntry(val id: Long, val hour: Int, val minute: Int, val label: String, val enabled: Boolean)
 
@@ -226,7 +226,7 @@ object Store {
             val arr = JSONArray(raw)
             MutableList(arr.length()) { i ->
                 val o = arr.getJSONObject(i)
-                NoteEntry(o.getLong("id"), o.optString("n", "Note"), o.optString("t", ""), o.optLong("ts", 0L))
+                NoteEntry(o.getLong("id"), o.optString("n", "Note"), o.optString("t", ""), o.optLong("ts", 0L), o.optInt("col", 0))
             }
         } catch (e: Exception) {
             mutableListOf()
@@ -236,7 +236,7 @@ object Store {
     private fun saveNoteList(c: Context, list: List<NoteEntry>) {
         val arr = JSONArray()
         for (n in list) {
-            arr.put(JSONObject().put("id", n.id).put("n", n.name).put("t", n.text).put("ts", n.time))
+            arr.put(JSONObject().put("id", n.id).put("n", n.name).put("t", n.text).put("ts", n.time).put("col", n.color))
         }
         prefs(c).edit().putString(KEY_NOTES, arr.toString()).apply()
     }
@@ -270,7 +270,7 @@ object Store {
             val arr = JSONArray(raw)
             MutableList(arr.length()) { i ->
                 val o = arr.getJSONObject(i)
-                CounterEntry(o.getLong("id"), o.optString("n", "Counter"), o.optInt("v", 0), o.optInt("s", 1))
+                CounterEntry(o.getLong("id"), o.optString("n", "Counter"), o.optInt("v", 0), o.optInt("s", 1), o.optInt("col", 0))
             }
         } catch (e: Exception) {
             mutableListOf()
@@ -280,7 +280,7 @@ object Store {
     private fun saveCounterList(c: Context, list: List<CounterEntry>) {
         val arr = JSONArray()
         for (e in list) {
-            arr.put(JSONObject().put("id", e.id).put("n", e.name).put("v", e.value).put("s", e.step))
+            arr.put(JSONObject().put("id", e.id).put("n", e.name).put("v", e.value).put("s", e.step).put("col", e.color))
         }
         prefs(c).edit().putString(KEY_COUNTERS, arr.toString()).apply()
     }
@@ -390,14 +390,14 @@ object Store {
             val arr = JSONArray(raw)
             MutableList(arr.length()) { i ->
                 val o = arr.getJSONObject(i)
-                HabitEntry(o.getLong("id"), o.optString("n", "Habit"), o.optInt("s", 0), o.optLong("l", 0L))
+                HabitEntry(o.getLong("id"), o.optString("n", "Habit"), o.optInt("s", 0), o.optLong("l", 0L), o.optInt("col", 0))
             }
         } catch (e: Exception) { mutableListOf() }
     }
 
     private fun saveHabitEntries(c: Context, list: List<HabitEntry>) {
         val arr = JSONArray()
-        for (e in list) arr.put(JSONObject().put("id", e.id).put("n", e.name).put("s", e.streak).put("l", e.last))
+        for (e in list) arr.put(JSONObject().put("id", e.id).put("n", e.name).put("s", e.streak).put("l", e.last).put("col", e.color))
         prefs(c).edit().putString(KEY_HABITS, arr.toString()).apply()
     }
 
@@ -706,6 +706,43 @@ object Store {
     private fun cancelTimerAlarm(c: Context) {
         val am = c.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
         am.cancel(timerAlarmIntent(c))
+    }
+
+    // ---- Per-item color accents ----
+    val itemColorRes = intArrayOf(
+        R.color.item_c1, R.color.item_c2, R.color.item_c3,
+        R.color.item_c4, R.color.item_c5, R.color.item_c6
+    )
+
+    /** Resolves a 1-based color index to a color int; 0 (or out of range) = none. */
+    fun itemColor(c: Context, index: Int): Int =
+        if (index in 1..itemColorRes.size) c.getColor(itemColorRes[index - 1]) else 0
+
+    fun setNoteColor(c: Context, id: Long, color: Int) {
+        val list = getNoteList(c); val i = list.indexOfFirst { it.id == id }
+        if (i >= 0) { list[i] = list[i].copy(color = color); saveNoteList(c, list) }
+    }
+
+    fun setCounterColor(c: Context, id: Long, color: Int) {
+        val list = getCounterList(c); val i = list.indexOfFirst { it.id == id }
+        if (i >= 0) { list[i] = list[i].copy(color = color); saveCounterList(c, list) }
+    }
+
+    fun setHabitColor(c: Context, id: Long, color: Int) {
+        val list = getHabitEntries(c); val i = list.indexOfFirst { it.id == id }
+        if (i >= 0) { list[i] = list[i].copy(color = color); saveHabitEntries(c, list) }
+    }
+
+    fun reorderNotes(c: Context, orderedIds: List<Long>) {
+        val list = getNoteList(c); val byId = list.associateBy { it.id }
+        val reordered = orderedIds.mapNotNull { byId[it] }
+        if (reordered.size == list.size) saveNoteList(c, reordered)
+    }
+
+    fun reorderCounters(c: Context, orderedIds: List<Long>) {
+        val list = getCounterList(c); val byId = list.associateBy { it.id }
+        val reordered = orderedIds.mapNotNull { byId[it] }
+        if (reordered.size == list.size) saveCounterList(c, reordered)
     }
 
     fun findCounter(c: Context, id: Long): CounterEntry? = getCounterList(c).firstOrNull { it.id == id }

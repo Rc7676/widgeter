@@ -76,6 +76,7 @@
     <string name="new_counter">New counter</string>
     <string name="note_empty_preview">(empty)</string>
     <string name="rename">Rename</string>
+    <string name="color_label">Color</string>
     <string name="delete">Delete</string>
     <string name="item_deleted">Deleted</string>
     <string name="habit_checkin">Check in</string>

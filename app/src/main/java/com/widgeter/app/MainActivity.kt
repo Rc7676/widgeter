@@ -3,6 +3,7 @@ package com.widgeter.app
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -187,6 +188,15 @@ class MainActivity : AppCompatActivity() {
         val rv = findViewById<RecyclerView>(R.id.notes_recycler)
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = notesAdapter
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+            override fun onMove(r: RecyclerView, v: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder): Boolean {
+                notesAdapter.onItemMove(v.bindingAdapterPosition, t.bindingAdapterPosition); return true
+            }
+            override fun onSwiped(vh: RecyclerView.ViewHolder, dir: Int) {}
+            override fun clearView(r: RecyclerView, vh: RecyclerView.ViewHolder) {
+                super.clearView(r, vh); Store.reorderNotes(this@MainActivity, notesAdapter.currentIds()); afterChange()
+            }
+        }).attachToRecyclerView(rv)
         findViewById<View>(R.id.notes_fab).setOnClickListener {
             val entry = Store.addNoteEntry(this, getString(R.string.notes_title))
             afterChange(); renderNotes()
@@ -223,6 +233,7 @@ class MainActivity : AppCompatActivity() {
         val text = view.findViewById<TextInputEditText>(R.id.dlg_text)
         name.setText(entry.name)
         text.setText(entry.text)
+        val colorPick = buildColorPicker(view.findViewById(R.id.dlg_colors), entry.color)
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.edit_note_title)
             .setView(view)
@@ -230,6 +241,7 @@ class MainActivity : AppCompatActivity() {
             .setNeutralButton(R.string.delete) { _, _ -> deleteNoteWithUndo(entry) }
             .setPositiveButton(R.string.save_generic) { _, _ ->
                 Store.updateNoteEntry(this, entry.id, name.text?.toString().orEmpty(), text.text?.toString().orEmpty())
+                Store.setNoteColor(this, entry.id, colorPick())
                 afterChange(); renderNotes()
             }
             .show()
@@ -254,6 +266,15 @@ class MainActivity : AppCompatActivity() {
         val rv = findViewById<RecyclerView>(R.id.counters_recycler)
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = countersAdapter
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+            override fun onMove(r: RecyclerView, v: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder): Boolean {
+                countersAdapter.onItemMove(v.bindingAdapterPosition, t.bindingAdapterPosition); return true
+            }
+            override fun onSwiped(vh: RecyclerView.ViewHolder, dir: Int) {}
+            override fun clearView(r: RecyclerView, vh: RecyclerView.ViewHolder) {
+                super.clearView(r, vh); Store.reorderCounters(this@MainActivity, countersAdapter.currentIds()); afterChange()
+            }
+        }).attachToRecyclerView(rv)
         findViewById<View>(R.id.counters_fab).setOnClickListener { renameCounterDialog(null) }
     }
 
@@ -278,6 +299,7 @@ class MainActivity : AppCompatActivity() {
         val step = view.findViewById<TextInputEditText>(R.id.dlg_step)
         name.setText(entry?.name ?: "")
         step.setText((entry?.step ?: 1).toString())
+        val colorPick = buildColorPicker(view.findViewById(R.id.dlg_colors), entry?.color ?: 0)
         MaterialAlertDialogBuilder(this)
             .setTitle(if (entry == null) R.string.new_counter else R.string.rename)
             .setView(view)
@@ -285,12 +307,9 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton(R.string.save_generic) { _, _ ->
                 val nm = name.text?.toString().orEmpty()
                 val st = step.text?.toString()?.trim()?.toIntOrNull()?.coerceAtLeast(1) ?: 1
-                if (entry == null) {
-                    val created = Store.addCounterEntry(this, nm)
-                    Store.renameCounterEntry(this, created.id, nm, st)
-                } else {
-                    Store.renameCounterEntry(this, entry.id, nm, st)
-                }
+                val targetId = if (entry == null) Store.addCounterEntry(this, nm).id else entry.id
+                Store.renameCounterEntry(this, targetId, nm, st)
+                Store.setCounterColor(this, targetId, colorPick())
                 afterChange(); renderCounters()
             }
             .show()
@@ -541,6 +560,13 @@ class MainActivity : AppCompatActivity() {
         for (h in list) {
             val row = LayoutInflater.from(this).inflate(R.layout.item_habit_row, container, false)
             row.findViewById<TextView>(R.id.habit_row_name).text = h.name
+            val hCol = Store.itemColor(this, h.color)
+            row.findViewById<View>(R.id.item_color).apply {
+                if (hCol != 0) {
+                    visibility = View.VISIBLE
+                    backgroundTintList = android.content.res.ColorStateList.valueOf(hCol)
+                } else visibility = View.GONE
+            }
             val streak = Store.habitLiveStreak(h)
             row.findViewById<TextView>(R.id.habit_row_sub).text = when {
                 Store.habitDoneTodayEntry(h) -> getString(R.string.habit_done_row, streak)
@@ -560,13 +586,16 @@ class MainActivity : AppCompatActivity() {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_name, null)
         val name = view.findViewById<TextInputEditText>(R.id.dlg_name)
         name.setText(entry?.name ?: "")
+        val colorPick = buildColorPicker(view.findViewById(R.id.dlg_colors), entry?.color ?: 0)
         MaterialAlertDialogBuilder(this)
             .setTitle(if (entry == null) R.string.new_habit else R.string.rename)
             .setView(view)
             .setNegativeButton(R.string.cancel, null)
             .setPositiveButton(R.string.save_generic) { _, _ ->
                 val nm = name.text?.toString().orEmpty()
-                if (entry == null) Store.addHabitEntry(this, nm) else Store.renameHabitEntry(this, entry.id, nm)
+                val targetId = if (entry == null) Store.addHabitEntry(this, nm).id else entry.id
+                Store.renameHabitEntry(this, targetId, nm)
+                Store.setHabitColor(this, targetId, colorPick())
                 afterChange(); renderMore(); refreshHeroStreak()
             }
             .show()
@@ -710,4 +739,36 @@ class MainActivity : AppCompatActivity() {
     private fun afterChange() {
         Widgets.refreshAll(this)
     }
+
+    /** Builds a row of color swatches (0 = none, 1..6 colors) into [container].
+     *  Returns a getter for the currently selected index. */
+    private fun buildColorPicker(container: LinearLayout, current: Int): () -> Int {
+        var selected = current
+        val ring = androidx.core.content.ContextCompat.getColor(this, R.color.on_surface)
+        val outline = androidx.core.content.ContextCompat.getColor(this, R.color.outline)
+        fun rebuild() {
+            container.removeAllViews()
+            for (idx in 0..Store.itemColorRes.size) {
+                val swatch = View(this)
+                val d = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    if (idx == 0) {
+                        setColor(0x00000000)
+                        setStroke(dp(2), outline)
+                    } else {
+                        setColor(Store.itemColor(this@MainActivity, idx))
+                    }
+                    if (idx == selected) setStroke(dp(3), ring)
+                }
+                swatch.background = d
+                swatch.setOnClickListener { selected = idx; rebuild() }
+                val lp = LinearLayout.LayoutParams(dp(34), dp(34)).apply { marginEnd = dp(10) }
+                container.addView(swatch, lp)
+            }
+        }
+        rebuild()
+        return { selected }
+    }
+
+    private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
 }
