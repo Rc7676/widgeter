@@ -42,7 +42,8 @@ class WidgetGalleryActivity : AppCompatActivity() {
         WidgetInfo(MoonWidget::class.java, R.string.moon_title, R.string.widget_desc_moon),
         WidgetInfo(DayInfoWidget::class.java, R.string.dayinfo_title, R.string.widget_desc_dayinfo),
         WidgetInfo(AnalogClockWidget::class.java, R.string.analog_title, R.string.widget_desc_analog),
-        WidgetInfo(GoalWidget::class.java, R.string.goal_title, R.string.widget_desc_goal)
+        WidgetInfo(GoalWidget::class.java, R.string.goal_title, R.string.widget_desc_goal),
+        WidgetInfo(QuickActionsWidget::class.java, R.string.quickactions_title, R.string.widget_desc_quickactions)
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

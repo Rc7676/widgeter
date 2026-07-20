@@ -244,6 +244,13 @@
     <string name="goal_target_fmt">/ %1$d</string>
     <string name="widget_desc_goal">Save toward a target with a progress bar</string>
 
+    <!-- Quick actions widget -->
+    <string name="quickactions_title">Quick actions</string>
+    <string name="qa_note">Note</string>
+    <string name="qa_task">Task</string>
+    <string name="qa_counter">Counter</string>
+    <string name="widget_desc_quickactions">Shortcut buttons: new note, task, counter</string>
+
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>
     <string name="widget_desc_notes">A quick note on your home screen</string>

@@ -315,6 +315,18 @@
                 android:resource="@xml/goal_widget_info" />
         </receiver>
 
+        <!-- Quick actions shortcuts widget -->
+        <receiver
+            android:name=".QuickActionsWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/quickactions_widget_info" />
+        </receiver>
+
         <!-- Alarm firing + boot reschedule -->
         <receiver
             android:name=".AlarmReceiver"

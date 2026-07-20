@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val ACTION_NEW_TASK = "com.widgeter.app.action.NEW_TASK"
         const val ACTION_NEW_NOTE = "com.widgeter.app.action.NEW_NOTE"
+        const val ACTION_NEW_COUNTER = "com.widgeter.app.action.NEW_COUNTER"
         const val EXTRA_OPEN_NOTE = "com.widgeter.app.OPEN_NOTE"
     }
 
@@ -115,6 +116,10 @@ class MainActivity : AppCompatActivity() {
                 nav.selectedItemId = R.id.nav_notes
                 val entry = Store.addNoteEntry(this, getString(R.string.notes_title))
                 afterChange(); renderNotes(); editNoteDialog(entry)
+            }
+            intent?.action == ACTION_NEW_COUNTER -> {
+                nav.selectedItemId = R.id.nav_counters
+                renameCounterDialog(null)
             }
             openNoteId != 0L -> {
                 nav.selectedItemId = R.id.nav_notes
