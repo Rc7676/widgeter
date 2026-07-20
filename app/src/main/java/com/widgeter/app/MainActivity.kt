@@ -457,7 +457,30 @@ class MainActivity : AppCompatActivity() {
                 refreshWidget(TimerWidget::class.java); renderClock()
             }
         }
+        findViewById<MaterialButton>(R.id.t_custom_btn).setOnClickListener { showTimerDurationPicker() }
         findViewById<MaterialButton>(R.id.alarm_add_btn).setOnClickListener { showAlarmTimePicker(null) }
+    }
+
+    /** Lets the user set any timer length up to 23h 59m (hours : minutes). */
+    private fun showTimerDurationPicker() {
+        val current = Store.timerDuration(this)
+        val curMin = (current / 60_000L).toInt()
+        val picker = MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_24H)
+            .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
+            .setHour(curMin / 60)
+            .setMinute(curMin % 60)
+            .setTitleText(R.string.timer_custom_title)
+            .build()
+        picker.addOnPositiveButtonClickListener {
+            val totalMin = picker.hour * 60 + picker.minute
+            if (totalMin > 0) {
+                Store.setTimerDuration(this, totalMin * 60_000L)
+                Store.resetTimer(this)
+                refreshWidget(TimerWidget::class.java); renderClock()
+            }
+        }
+        picker.show(supportFragmentManager, "timer_custom")
     }
 
     private fun renderAlarms() {
