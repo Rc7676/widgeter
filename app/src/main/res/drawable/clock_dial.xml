@@ -1,0 +1,24 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    <!-- Face -->
+    <path
+        android:fillColor="@color/widget_card"
+        android:strokeColor="@color/widget_accent"
+        android:strokeWidth="3"
+        android:pathData="M100,8 A92,92 0 1,1 99.99,8 Z" />
+    <!-- Hour ticks at 12, 3, 6, 9 -->
+    <path android:fillColor="@color/widget_on_card_muted"
+        android:pathData="M97,18 h6 v16 h-6 Z" />
+    <path android:fillColor="@color/widget_on_card_muted"
+        android:pathData="M166,97 v6 h-16 v-6 Z" />
+    <path android:fillColor="@color/widget_on_card_muted"
+        android:pathData="M97,166 h6 v16 h-6 Z" />
+    <path android:fillColor="@color/widget_on_card_muted"
+        android:pathData="M34,97 v6 h-16 v-6 Z" />
+    <!-- Center hub -->
+    <path android:fillColor="@color/widget_accent"
+        android:pathData="M100,94 A6,6 0 1,1 99.99,94 Z" />
+</vector>

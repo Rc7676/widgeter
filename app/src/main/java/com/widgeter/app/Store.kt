@@ -1125,7 +1125,8 @@ object Widgets {
             CountdownWidget::class.java, StopwatchWidget::class.java, TimerWidget::class.java,
             CalendarWidget::class.java, QuoteWidget::class.java, RandomWidget::class.java,
             BatteryWidget::class.java, WorldClockWidget::class.java, PomodoroWidget::class.java,
-            ProgressWidget::class.java, MoonWidget::class.java, DayInfoWidget::class.java
+            ProgressWidget::class.java, MoonWidget::class.java, DayInfoWidget::class.java,
+            AnalogClockWidget::class.java
         )
         for (cls in providers) {
             val ids = mgr.getAppWidgetIds(ComponentName(context, cls))

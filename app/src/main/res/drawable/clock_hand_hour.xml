@@ -1,0 +1,9 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    <path
+        android:fillColor="@color/widget_on_card"
+        android:pathData="M96,110 h8 v-52 a4,4 0 0,0 -8,0 Z" />
+</vector>

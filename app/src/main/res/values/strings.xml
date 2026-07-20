@@ -227,6 +227,10 @@
     <string name="dayinfo_detail_fmt">Day %1$d of %2$d · %3$d days left</string>
     <string name="widget_desc_dayinfo">Week number, day of year and days left</string>
 
+    <!-- Analog clock widget -->
+    <string name="analog_title">Analog clock</string>
+    <string name="widget_desc_analog">A classic ticking analog clock</string>
+
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>
     <string name="widget_desc_notes">A quick note on your home screen</string>
