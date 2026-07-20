@@ -6,117 +6,117 @@
     android:background="@drawable/widget_card_bg"
     android:orientation="vertical">
     <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/widget_accent" android:textSize="13sp" android:textStyle="bold" android:letterSpacing="0.06" android:textAllCaps="true" />
+        android:id="@+id/cal_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/widget_accent" android:textSize="13sp" android:textStyle="bold" android:letterSpacing="0.06" android:textAllCaps="true" />
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:orientation="horizontal">
         <TextView
-        android:fontFamily="@font/manrope_family" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="S" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
+        android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="S" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="M" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
+        android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="M" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="T" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
+        android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="T" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="W" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
+        android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="W" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="T" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
+        android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="T" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="F" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
+        android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="F" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="S" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
+        android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="S" android:textColor="@color/widget_on_card_muted" android:textSize="10sp" />
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d0" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d0" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d5" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d5" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d6" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d6" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d7" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d7" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d8" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d8" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d9" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d9" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d10" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d10" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d11" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d11" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d12" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d12" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d13" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d13" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d14" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d14" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d15" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d15" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d16" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d16" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d17" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d17" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d18" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d18" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d19" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d19" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d20" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d20" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d21" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d21" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d22" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d22" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d23" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d23" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d24" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d24" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d25" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d25" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d26" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d26" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d27" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d27" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d28" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d28" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d29" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d29" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d30" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d30" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d31" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d31" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d32" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d32" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d33" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d33" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d34" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d34" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d35" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d35" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d36" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d36" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d37" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d37" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d38" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d38" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d39" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d39" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d40" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d40" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
         <TextView
-        android:fontFamily="@font/manrope_family" android:id="@+id/cal_d41" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
+        android:id="@+id/cal_d41" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:textColor="@color/widget_on_card" android:textSize="12sp" />
     </LinearLayout>
 </LinearLayout>

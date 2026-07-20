@@ -6,7 +6,6 @@
     android:orientation="vertical">
 
     <TextView
-        android:fontFamily="@font/manrope_family"
         android:id="@+id/counter_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,7 +36,6 @@
             android:contentDescription="@string/cd_remove" />
 
         <TextView
-        android:fontFamily="@font/sora_family"
             android:id="@+id/counter_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

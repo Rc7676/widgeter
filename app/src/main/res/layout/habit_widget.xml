@@ -6,7 +6,6 @@
     android:orientation="vertical">
 
     <TextView
-        android:fontFamily="@font/manrope_family"
         android:id="@+id/habit_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,7 +30,6 @@
             android:orientation="vertical">
 
             <TextView
-        android:fontFamily="@font/sora_family"
                 android:id="@+id/habit_streak"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,7 +39,6 @@
                 android:textStyle="bold" />
 
             <TextView
-        android:fontFamily="@font/manrope_family"
                 android:id="@+id/habit_sub"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

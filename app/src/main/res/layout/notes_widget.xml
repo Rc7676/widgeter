@@ -13,7 +13,6 @@
         android:gravity="center_vertical">
 
         <TextView
-        android:fontFamily="@font/manrope_family"
             android:id="@+id/notes_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -28,7 +27,6 @@
             android:ellipsize="end" />
 
         <TextView
-        android:fontFamily="@font/manrope_family"
             android:id="@+id/notes_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,7 +35,6 @@
     </LinearLayout>
 
     <TextView
-        android:fontFamily="@font/manrope_family"
         android:id="@+id/notes_text"
         android:layout_width="match_parent"
         android:layout_height="0dp"

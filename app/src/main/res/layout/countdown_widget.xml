@@ -8,7 +8,6 @@
     android:gravity="center_vertical">
 
     <TextView
-        android:fontFamily="@font/manrope_family"
         android:id="@+id/countdown_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +19,6 @@
         android:ellipsize="end" />
 
     <TextView
-        android:fontFamily="@font/sora_family"
         android:id="@+id/countdown_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,7 +28,6 @@
         android:textStyle="bold" />
 
     <TextView
-        android:fontFamily="@font/manrope_family"
         android:id="@+id/countdown_unit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,7 +37,6 @@
         android:alpha="0.9" />
 
     <TextView
-        android:fontFamily="@font/manrope_family"
         android:id="@+id/countdown_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

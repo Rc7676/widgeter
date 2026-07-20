@@ -8,7 +8,6 @@
     android:gravity="center_vertical">
 
     <TextView
-        android:fontFamily="@font/manrope_family"
         android:id="@+id/clock_greeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,7 +17,6 @@
         android:alpha="0.92" />
 
     <TextClock
-        android:fontFamily="@font/sora_family"
         android:id="@+id/clock_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,7 +29,6 @@
         android:letterSpacing="-0.02" />
 
     <TextClock
-        android:fontFamily="@font/manrope_family"
         android:id="@+id/clock_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -8,7 +8,6 @@
     android:gravity="center_vertical">
 
     <TextView
-        android:fontFamily="@font/manrope_family"
         android:id="@+id/wc_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,7 +20,6 @@
         android:ellipsize="end" />
 
     <TextClock
-        android:fontFamily="@font/sora_family"
         android:id="@+id/wc_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,7 +32,6 @@
         android:letterSpacing="-0.02" />
 
     <TextClock
-        android:fontFamily="@font/manrope_family"
         android:id="@+id/wc_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,7 +41,6 @@
         android:textSize="12sp" />
 
     <TextView
-        android:fontFamily="@font/manrope_family"
         android:id="@+id/wc_hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
