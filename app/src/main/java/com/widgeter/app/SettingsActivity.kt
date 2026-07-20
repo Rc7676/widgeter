@@ -77,6 +77,7 @@ class SettingsActivity : AppCompatActivity() {
                 contentDescription = names.getOrElse(i) { "" }
                 setOnClickListener {
                     Store.setColorTheme(this@SettingsActivity, i)
+                    Widgets.refreshEverything(this@SettingsActivity)
                     recreate()
                 }
             }

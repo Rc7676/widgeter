@@ -58,6 +58,13 @@ class CountdownWidget : AppWidgetProvider() {
             )
         }
 
+        val onGrad = Store.widgetOnGrad(context)
+        views.setInt(R.id.countdown_root, "setBackgroundResource", Store.widgetGradRes(context))
+        views.setTextColor(R.id.countdown_title, onGrad)
+        views.setTextColor(R.id.countdown_number, onGrad)
+        views.setTextColor(R.id.countdown_unit, onGrad)
+        views.setTextColor(R.id.countdown_date, onGrad)
+
         views.setOnClickPendingIntent(R.id.countdown_root, editIntent(context, id))
         mgr.updateAppWidget(id, views)
     }

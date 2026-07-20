@@ -60,6 +60,23 @@ object Store {
     fun setColorTheme(c: Context, index: Int) =
         prefs(c).edit().putInt("color_theme", index).apply()
 
+    /** Widget accent color for the current theme (day/night aware). */
+    fun widgetAccent(c: Context): Int =
+        c.getColor(Themes.swatchColors[getColorTheme(c).coerceIn(0, Themes.swatchColors.size - 1)])
+
+    /** Gradient background drawable for the current theme (for gradient widgets). */
+    fun widgetGradRes(c: Context): Int = when (getColorTheme(c)) {
+        1 -> R.drawable.widget_grad_red
+        2 -> R.drawable.widget_grad_blue
+        3 -> R.drawable.widget_grad_yellow
+        4 -> R.drawable.widget_grad_black
+        else -> R.drawable.widget_clock_bg
+    }
+
+    /** Text color on the theme gradient — dark for Yellow (contrast), white otherwise. */
+    fun widgetOnGrad(c: Context): Int =
+        if (getColorTheme(c) == 3) 0xFF241A00.toInt() else 0xFFFFFFFF.toInt()
+
     fun isOnboarded(c: Context): Boolean = prefs(c).getBoolean(KEY_ONBOARDED, false)
     fun setOnboarded(c: Context) = prefs(c).edit().putBoolean(KEY_ONBOARDED, true).apply()
 
@@ -826,6 +843,28 @@ object Widgets {
         val todoIds = mgr.getAppWidgetIds(ComponentName(context, TodoWidget::class.java))
         if (todoIds.isNotEmpty()) {
             mgr.notifyAppWidgetViewDataChanged(todoIds, R.id.todo_list)
+        }
+    }
+
+    /** Re-render every widget type (used when the accent theme changes). */
+    fun refreshEverything(context: Context) {
+        val mgr = AppWidgetManager.getInstance(context)
+        val providers = listOf(
+            NotesWidget::class.java, CounterWidget::class.java, ClockWidget::class.java,
+            TodoWidget::class.java, HabitWidget::class.java, WaterWidget::class.java,
+            CountdownWidget::class.java, StopwatchWidget::class.java, TimerWidget::class.java,
+            CalendarWidget::class.java
+        )
+        for (cls in providers) {
+            val ids = mgr.getAppWidgetIds(ComponentName(context, cls))
+            if (ids.isNotEmpty()) {
+                context.sendBroadcast(
+                    Intent(context, cls).apply {
+                        action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+                    }
+                )
+            }
         }
     }
 }

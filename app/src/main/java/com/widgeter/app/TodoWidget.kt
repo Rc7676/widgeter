@@ -74,6 +74,7 @@ class TodoWidget : AppWidgetProvider() {
         // Header "+" and empty state both open the app to add tasks.
         views.setOnClickPendingIntent(R.id.todo_add, openAppPendingIntent(context, 10))
         views.setOnClickPendingIntent(R.id.todo_empty, openAppPendingIntent(context, 11))
+        views.setTextColor(R.id.todo_label, Store.widgetAccent(context))
 
         mgr.updateAppWidget(id, views)
     }

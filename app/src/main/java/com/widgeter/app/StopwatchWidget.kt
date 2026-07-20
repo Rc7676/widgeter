@@ -39,6 +39,7 @@ class StopwatchWidget : AppWidgetProvider() {
         views.setImageViewResource(R.id.sw_toggle, if (running) R.drawable.ic_pause else R.drawable.ic_play)
         views.setOnClickPendingIntent(R.id.sw_toggle, pi(context, ACTION_TOGGLE, 1))
         views.setOnClickPendingIntent(R.id.sw_reset, pi(context, ACTION_RESET, 2))
+        views.setTextColor(R.id.sw_label, Store.widgetAccent(context))
         mgr.updateAppWidget(id, views)
     }
 

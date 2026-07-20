@@ -52,6 +52,7 @@ class NotesWidget : AppWidgetProvider() {
             }
             views.setOnClickPendingIntent(R.id.notes_root, openNoteIntent(context, id, entry.id))
         }
+        views.setTextColor(R.id.notes_label, Store.widgetAccent(context))
         mgr.updateAppWidget(id, views)
     }
 

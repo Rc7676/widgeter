@@ -47,6 +47,7 @@ class CalendarWidget : AppWidgetProvider() {
             }
         }
 
+        views.setTextColor(R.id.cal_title, Store.widgetAccent(context))
         views.setOnClickPendingIntent(R.id.cal_root, openAppPendingIntent(context, 9300))
         mgr.updateAppWidget(id, views)
     }

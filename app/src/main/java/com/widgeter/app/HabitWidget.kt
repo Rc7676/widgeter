@@ -59,6 +59,7 @@ class HabitWidget : AppWidgetProvider() {
             )
             views.setOnClickPendingIntent(R.id.habit_check, pi)
         }
+        views.setTextColor(R.id.habit_label, Store.widgetAccent(context))
         mgr.updateAppWidget(id, views)
     }
 }

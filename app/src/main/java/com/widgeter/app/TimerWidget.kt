@@ -40,6 +40,7 @@ class TimerWidget : AppWidgetProvider() {
         views.setOnClickPendingIntent(R.id.t_toggle, pi(context, ACTION_TOGGLE, 1))
         views.setOnClickPendingIntent(R.id.t_reset, pi(context, ACTION_RESET, 2))
         views.setOnClickPendingIntent(R.id.t_chrono, openAppPendingIntent(context, 9200))
+        views.setTextColor(R.id.t_label, Store.widgetAccent(context))
         mgr.updateAppWidget(id, views)
     }
 

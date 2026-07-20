@@ -54,6 +54,7 @@ class CounterWidget : AppWidgetProvider() {
         views.setOnClickPendingIntent(R.id.counter_plus, buttonIntent(context, ACTION_INC, id))
         views.setOnClickPendingIntent(R.id.counter_minus, buttonIntent(context, ACTION_DEC, id))
         views.setOnClickPendingIntent(R.id.counter_label, editIntent(context, id))
+        views.setTextColor(R.id.counter_label, Store.widgetAccent(context))
         mgr.updateAppWidget(id, views)
     }
 

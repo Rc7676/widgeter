@@ -50,6 +50,7 @@ class WaterWidget : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.water_plus, intent(context, ACTION_ADD, 1))
             views.setOnClickPendingIntent(R.id.water_minus, intent(context, ACTION_SUB, 2))
         }
+        views.setTextColor(R.id.water_label, Store.widgetAccent(context))
         mgr.updateAppWidget(id, views)
     }
 

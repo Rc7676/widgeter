@@ -32,11 +32,21 @@ class ClockWidget : AppWidgetProvider() {
             .getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0)
         val compact = minHeight in 1..119
 
+        val onGrad = Store.widgetOnGrad(context)
+        val gradRes = Store.widgetGradRes(context)
         val views = if (compact) {
-            RemoteViews(context.packageName, R.layout.clock_widget_compact)
+            RemoteViews(context.packageName, R.layout.clock_widget_compact).apply {
+                setInt(R.id.clock_root, "setBackgroundResource", gradRes)
+                setTextColor(R.id.clock_time, onGrad)
+                setTextColor(R.id.clock_date, onGrad)
+            }
         } else {
             RemoteViews(context.packageName, R.layout.clock_widget).apply {
                 setTextViewText(R.id.clock_greeting, greeting())
+                setInt(R.id.clock_root, "setBackgroundResource", gradRes)
+                setTextColor(R.id.clock_greeting, onGrad)
+                setTextColor(R.id.clock_time, onGrad)
+                setTextColor(R.id.clock_date, onGrad)
             }
         }
         views.setOnClickPendingIntent(R.id.clock_root, openAppPendingIntent(context))
