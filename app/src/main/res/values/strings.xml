@@ -87,6 +87,11 @@
     <string name="tasks_title">Tasks</string>
     <string name="more_title">More</string>
     <string name="notes_empty_page">No notes yet. Tap + to add one.</string>
+    <string name="notes_empty_title">A blank page awaits</string>
+    <string name="notes_empty_sub">Jot a list, an idea or a reminder — then drop it on your home screen as a widget.</string>
+    <string name="tasks_header_sub">Stay on top of today</string>
+    <string name="tasks_empty_title">All clear ✨</string>
+    <string name="tasks_empty_sub">No tasks yet. Add one above and check it off when it\'s done.</string>
     <string name="counters_empty_page">No counters yet. Tap + to add one.</string>
     <string name="counters_header_sub">Track anything, tap to count</string>
     <string name="counters_empty_title">Nothing to count yet</string>
