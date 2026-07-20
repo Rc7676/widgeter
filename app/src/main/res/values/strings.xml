@@ -86,6 +86,7 @@
     <!-- Navigation / pages -->
     <string name="tasks_title">Tasks</string>
     <string name="more_title">More</string>
+    <string name="more_header_sub">Habits, water &amp; countdowns</string>
     <string name="notes_empty_page">No notes yet. Tap + to add one.</string>
     <string name="notes_empty_title">A blank page awaits</string>
     <string name="notes_empty_sub">Jot a list, an idea or a reminder — then drop it on your home screen as a widget.</string>

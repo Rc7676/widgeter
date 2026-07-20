@@ -15,6 +15,28 @@
         android:paddingHorizontal="16dp"
         android:paddingTop="8dp">
 
+        <!-- Gradient header (consistent with other pages) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_header"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="18dp"
+            android:paddingVertical="16dp"
+            android:elevation="6dp">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView style="@style/PageHeaderTitle" android:text="@string/more_title" />
+                <TextView style="@style/PageHeaderSub" android:text="@string/more_header_sub" />
+            </LinearLayout>
+            <TextView style="@style/HeaderBadge" android:text="⋯" />
+        </LinearLayout>
+
         <!-- HABITS -->
         <com.google.android.material.card.MaterialCardView style="@style/Card">
             <LinearLayout style="@style/CardInner">
