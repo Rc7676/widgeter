@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Display / heading font: Sora. Body / UI font: Manrope (theme default). -->
+
+    <style name="Type.Display.Large" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="fontFamily">@font/sora_family</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
+    <style name="Type.Display.Medium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="fontFamily">@font/sora_family</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
+    <style name="Type.Display.Small" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="fontFamily">@font/sora_family</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+        <item name="android:letterSpacing">-0.015</item>
+    </style>
+
+    <style name="Type.Headline.Large" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="fontFamily">@font/sora_family</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+        <item name="android:letterSpacing">-0.015</item>
+    </style>
+
+    <style name="Type.Headline.Medium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="fontFamily">@font/sora_family</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+
+    <style name="Type.Headline.Small" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="fontFamily">@font/sora_family</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+
+    <style name="Type.Title.Large" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">@font/sora_family</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+        <item name="android:letterSpacing">-0.005</item>
+    </style>
+
+    <style name="Type.Title.Medium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">@font/sora_family</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+    </style>
+
+    <style name="Type.Title.Small" parent="TextAppearance.Material3.TitleSmall">
+        <item name="fontFamily">@font/sora_family</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+    </style>
+
+    <!-- Body & label keep Manrope (theme default) but named for explicit use. -->
+    <style name="Type.Body.Large" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/manrope_family</item>
+        <item name="android:fontFamily">@font/manrope_family</item>
+    </style>
+
+    <style name="Type.Label.Large" parent="TextAppearance.Material3.LabelLarge">
+        <item name="fontFamily">@font/manrope_family</item>
+        <item name="android:fontFamily">@font/manrope_family</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+</resources>

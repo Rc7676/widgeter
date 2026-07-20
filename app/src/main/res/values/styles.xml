@@ -40,6 +40,8 @@
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textSize">17sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+        <item name="android:letterSpacing">-0.01</item>
     </style>
 
     <style name="StatTile">
@@ -58,8 +60,16 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:text">0</item>
         <item name="android:textColor">?attr/heroOn</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">22sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
+    <style name="StatLabel.Caps" parent="StatLabel">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textSize">10sp</item>
     </style>
 
     <style name="StatLabel">

@@ -13,6 +13,19 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="heroOn">@color/on_hero</item>
         <item name="heroTile">@color/hero_tile</item>
+
+        <!-- Custom type: Manrope everywhere, Sora for display/headline/title. -->
+        <item name="android:fontFamily">@font/manrope_family</item>
+        <item name="fontFamily">@font/manrope_family</item>
+        <item name="textAppearanceDisplayLarge">@style/Type.Display.Large</item>
+        <item name="textAppearanceDisplayMedium">@style/Type.Display.Medium</item>
+        <item name="textAppearanceDisplaySmall">@style/Type.Display.Small</item>
+        <item name="textAppearanceHeadlineLarge">@style/Type.Headline.Large</item>
+        <item name="textAppearanceHeadlineMedium">@style/Type.Headline.Medium</item>
+        <item name="textAppearanceHeadlineSmall">@style/Type.Headline.Small</item>
+        <item name="textAppearanceTitleLarge">@style/Type.Title.Large</item>
+        <item name="textAppearanceTitleMedium">@style/Type.Title.Medium</item>
+        <item name="textAppearanceTitleSmall">@style/Type.Title.Small</item>
     </style>
 
     <!-- Purple (default) -->
