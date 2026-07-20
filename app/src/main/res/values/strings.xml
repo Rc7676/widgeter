@@ -202,6 +202,11 @@
     <string name="battery_ok">On battery</string>
     <string name="widget_desc_battery">Battery level with a bar</string>
 
+    <!-- World clock widget -->
+    <string name="worldclock_title">World clock</string>
+    <string name="worldclock_hint">tap to change city</string>
+    <string name="widget_desc_worldclock">A clock for another time zone</string>
+
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>
     <string name="widget_desc_notes">A quick note on your home screen</string>

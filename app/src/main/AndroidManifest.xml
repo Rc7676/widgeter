@@ -231,6 +231,18 @@
                 android:resource="@xml/battery_widget_info" />
         </receiver>
 
+        <!-- World clock widget -->
+        <receiver
+            android:name=".WorldClockWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/worldclock_widget_info" />
+        </receiver>
+
         <!-- Alarm firing + boot reschedule -->
         <receiver
             android:name=".AlarmReceiver"

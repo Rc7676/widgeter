@@ -786,6 +786,30 @@ object Store {
         prefs(c).edit().putString("rnd_res", r).apply()
     }
 
+    // ===================== World clock =====================
+    /** City label to IANA time-zone id, cycled by tapping the widget. */
+    val worldZones = listOf(
+        "Los Angeles" to "America/Los_Angeles",
+        "New York" to "America/New_York",
+        "London" to "Europe/London",
+        "Paris" to "Europe/Paris",
+        "Dubai" to "Asia/Dubai",
+        "Mumbai" to "Asia/Kolkata",
+        "Singapore" to "Asia/Singapore",
+        "Tokyo" to "Asia/Tokyo",
+        "Sydney" to "Australia/Sydney"
+    )
+
+    fun worldClockIndex(c: Context): Int =
+        prefs(c).getInt("wc_idx", 0).coerceIn(0, worldZones.size - 1)
+
+    fun cycleWorldClock(c: Context) {
+        prefs(c).edit().putInt("wc_idx", (worldClockIndex(c) + 1) % worldZones.size).apply()
+    }
+
+    fun worldZoneId(c: Context): String = worldZones[worldClockIndex(c)].second
+    fun worldCity(c: Context): String = worldZones[worldClockIndex(c)].first
+
     // ---- Per-item color accents ----
     val itemColorRes = intArrayOf(
         R.color.item_c1, R.color.item_c2, R.color.item_c3,
@@ -969,7 +993,7 @@ object Widgets {
             TodoWidget::class.java, HabitWidget::class.java, WaterWidget::class.java,
             CountdownWidget::class.java, StopwatchWidget::class.java, TimerWidget::class.java,
             CalendarWidget::class.java, QuoteWidget::class.java, RandomWidget::class.java,
-            BatteryWidget::class.java
+            BatteryWidget::class.java, WorldClockWidget::class.java
         )
         for (cls in providers) {
             val ids = mgr.getAppWidgetIds(ComponentName(context, cls))
