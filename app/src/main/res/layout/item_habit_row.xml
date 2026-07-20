@@ -8,11 +8,20 @@
     android:minHeight="56dp"
     android:orientation="horizontal">
 
+    <TextView
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/bg_row_tile"
+        android:gravity="center"
+        android:text="🔥"
+        android:textSize="16sp" />
+
     <View
         android:id="@+id/item_color"
-        android:layout_width="11dp"
-        android:layout_height="11dp"
-        android:layout_marginEnd="10dp"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/color_dot"
         android:visibility="gone" />
 
@@ -27,8 +36,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Habit"
+            android:fontFamily="@font/sora_family"
+            android:textStyle="bold"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="16sp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/habit_row_sub"
