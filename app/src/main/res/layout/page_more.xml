@@ -126,6 +126,22 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- CALENDAR -->
+        <com.google.android.material.card.MaterialCardView style="@style/Card">
+            <LinearLayout style="@style/CardInner">
+                <LinearLayout style="@style/CardHeader">
+                    <ImageView style="@style/CardHeaderIcon" android:src="@drawable/ic_calendar" />
+                    <TextView style="@style/CardHeaderText" android:text="@string/calendar_title" />
+                </LinearLayout>
+
+                <CalendarView
+                    android:id="@+id/calendar_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/more_settings_btn"
             style="@style/Widget.Material3.Button.TonalButton"

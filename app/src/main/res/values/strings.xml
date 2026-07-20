@@ -164,6 +164,20 @@
     <string name="widget_desc_stopwatch">A running stopwatch</string>
     <string name="widget_desc_timer">A countdown timer</string>
 
+    <!-- Alarms -->
+    <string name="alarms_title">Alarms</string>
+    <string name="alarms_empty">No alarms yet. Tap Add to set one.</string>
+    <string name="alarm_title">Alarm</string>
+    <string name="alarm_daily">Every day</string>
+    <string name="alarm_set">Set alarm</string>
+    <string name="alarm_dismiss">Dismiss</string>
+    <string name="channel_alarm">Alarms</string>
+    <string name="channel_alarm_desc">Rings when an alarm goes off.</string>
+
+    <!-- Calendar -->
+    <string name="calendar_title">Calendar</string>
+    <string name="widget_desc_calendar">A month calendar with today marked</string>
+
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>
     <string name="widget_desc_notes">A quick note on your home screen</string>

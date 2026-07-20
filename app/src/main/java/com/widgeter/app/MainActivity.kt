@@ -24,8 +24,11 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -427,6 +430,46 @@ class MainActivity : AppCompatActivity() {
                 refreshWidget(TimerWidget::class.java); renderClock()
             }
         }
+        findViewById<MaterialButton>(R.id.alarm_add_btn).setOnClickListener { showAlarmTimePicker(null) }
+    }
+
+    private fun renderAlarms() {
+        val container = findViewById<LinearLayout>(R.id.alarms_container)
+        container.removeAllViews()
+        val list = Store.getAlarms(this)
+        findViewById<View>(R.id.alarms_empty).visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+        for (a in list) {
+            val row = LayoutInflater.from(this).inflate(R.layout.item_alarm_row, container, false)
+            row.findViewById<TextView>(R.id.alarm_time_row).text = String.format("%02d:%02d", a.hour, a.minute)
+            row.findViewById<TextView>(R.id.alarm_label_row).text =
+                a.label.ifBlank { getString(R.string.alarm_daily) }
+            val sw = row.findViewById<MaterialSwitch>(R.id.alarm_switch)
+            sw.isChecked = a.enabled
+            sw.setOnClickListener { Store.setAlarmEnabled(this, a.id, sw.isChecked); renderAlarms() }
+            row.findViewById<View>(R.id.alarm_tap).setOnClickListener { showAlarmTimePicker(a) }
+            row.findViewById<ImageButton>(R.id.alarm_delete_row).setOnClickListener {
+                Store.removeAlarm(this, a.id); renderAlarms()
+            }
+            container.addView(row)
+        }
+    }
+
+    private fun showAlarmTimePicker(existing: AlarmEntry?) {
+        val is24 = android.text.format.DateFormat.is24HourFormat(this)
+        val picker = MaterialTimePicker.Builder()
+            .setTimeFormat(if (is24) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
+            .setHour(existing?.hour ?: 8)
+            .setMinute(existing?.minute ?: 0)
+            .setTitleText(R.string.alarm_set)
+            .build()
+        picker.addOnPositiveButtonClickListener {
+            val h = picker.hour
+            val m = picker.minute
+            if (existing == null) Store.addAlarm(this, h, m, "")
+            else Store.updateAlarm(this, existing.id, h, m, existing.label, existing.enabled)
+            renderAlarms()
+        }
+        picker.show(supportFragmentManager, "alarm_time")
     }
 
     private fun renderClock() {
@@ -451,6 +494,8 @@ class MainActivity : AppCompatActivity() {
             setText(if (tRunning) R.string.pause else R.string.start)
             setIconResource(if (tRunning) R.drawable.ic_pause else R.drawable.ic_play)
         }
+
+        renderAlarms()
     }
 
     private fun refreshWidget(cls: Class<*>) {

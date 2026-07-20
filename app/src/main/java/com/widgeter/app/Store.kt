@@ -15,6 +15,7 @@ data class CounterEntry(val id: Long, val name: String, val value: Int, val step
 data class CountdownEntry(val id: Long, val name: String, val date: Long) // date = epoch day, 0 = unset
 data class HabitEntry(val id: Long, val name: String, val streak: Int, val last: Long) // last = epoch day
 data class WaterEntry(val id: Long, val name: String, val count: Int, val goal: Int, val day: Long)
+data class AlarmEntry(val id: Long, val hour: Int, val minute: Int, val label: String, val enabled: Boolean)
 
 /** A single to-do entry with a stable id (so toggles never hit the wrong row). */
 data class TodoItem(
@@ -497,6 +498,101 @@ object Store {
             saveWaterEntries(c, mutableListOf(e)); return e
         }
         return null
+    }
+
+    // ===================== Alarms =====================
+    private const val KEY_ALARMS = "alarms_list"
+
+    fun getAlarms(c: Context): MutableList<AlarmEntry> {
+        val raw = prefs(c).getString(KEY_ALARMS, null) ?: return mutableListOf()
+        return try {
+            val arr = JSONArray(raw)
+            MutableList(arr.length()) { i ->
+                val o = arr.getJSONObject(i)
+                AlarmEntry(o.getLong("id"), o.optInt("h", 8), o.optInt("m", 0), o.optString("lbl", ""), o.optBoolean("en", true))
+            }
+        } catch (e: Exception) { mutableListOf() }
+    }
+
+    private fun saveAlarms(c: Context, list: List<AlarmEntry>) {
+        val arr = JSONArray()
+        for (a in list) arr.put(JSONObject().put("id", a.id).put("h", a.hour).put("m", a.minute).put("lbl", a.label).put("en", a.enabled))
+        prefs(c).edit().putString(KEY_ALARMS, arr.toString()).apply()
+    }
+
+    fun addAlarm(c: Context, hour: Int, minute: Int, label: String): AlarmEntry {
+        val list = getAlarms(c)
+        val entry = AlarmEntry(nextId(c), hour, minute, label, true)
+        list.add(entry)
+        list.sortWith(compareBy({ it.hour }, { it.minute }))
+        saveAlarms(c, list)
+        scheduleAlarm(c, entry)
+        return entry
+    }
+
+    fun updateAlarm(c: Context, id: Long, hour: Int, minute: Int, label: String, enabled: Boolean) {
+        val list = getAlarms(c)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx < 0) return
+        val updated = list[idx].copy(hour = hour, minute = minute, label = label, enabled = enabled)
+        list[idx] = updated
+        list.sortWith(compareBy({ it.hour }, { it.minute }))
+        saveAlarms(c, list)
+        if (enabled) scheduleAlarm(c, updated) else cancelAlarm(c, id)
+    }
+
+    fun setAlarmEnabled(c: Context, id: Long, enabled: Boolean) {
+        val list = getAlarms(c)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx < 0) return
+        list[idx] = list[idx].copy(enabled = enabled)
+        saveAlarms(c, list)
+        if (enabled) scheduleAlarm(c, list[idx]) else cancelAlarm(c, id)
+    }
+
+    fun removeAlarm(c: Context, id: Long) {
+        val list = getAlarms(c)
+        if (list.removeAll { it.id == id }) { saveAlarms(c, list); cancelAlarm(c, id) }
+    }
+
+    fun findAlarm(c: Context, id: Long): AlarmEntry? = getAlarms(c).firstOrNull { it.id == id }
+
+    fun alarmNextTrigger(hour: Int, minute: Int): Long {
+        val now = java.util.Calendar.getInstance()
+        val t = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, hour)
+            set(java.util.Calendar.MINUTE, minute)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        if (t.timeInMillis <= now.timeInMillis) t.add(java.util.Calendar.DAY_OF_YEAR, 1)
+        return t.timeInMillis
+    }
+
+    private fun alarmFirePI(c: Context, id: Long): PendingIntent {
+        val intent = Intent(c, AlarmReceiver::class.java).putExtra("alarm_id", id)
+        return PendingIntent.getBroadcast(c, id.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+    }
+
+    fun scheduleAlarm(c: Context, entry: AlarmEntry) {
+        if (!entry.enabled) return
+        val am = c.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
+        val trigger = alarmNextTrigger(entry.hour, entry.minute)
+        val show = openAppPendingIntent(c, 5000 + entry.id.toInt())
+        try {
+            am.setAlarmClock(android.app.AlarmManager.AlarmClockInfo(trigger, show), alarmFirePI(c, entry.id))
+        } catch (e: SecurityException) {
+            am.setExactAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, trigger, alarmFirePI(c, entry.id))
+        }
+    }
+
+    fun cancelAlarm(c: Context, id: Long) {
+        val am = c.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
+        am.cancel(alarmFirePI(c, id))
+    }
+
+    fun rescheduleAllAlarms(c: Context) {
+        for (a in getAlarms(c)) if (a.enabled) scheduleAlarm(c, a) else cancelAlarm(c, a.id)
     }
 
     // ===================== Stopwatch =====================

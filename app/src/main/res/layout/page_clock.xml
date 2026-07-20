@@ -156,5 +156,42 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- ALARMS -->
+        <com.google.android.material.card.MaterialCardView style="@style/Card">
+            <LinearLayout style="@style/CardInner">
+                <LinearLayout style="@style/CardHeader">
+                    <ImageView style="@style/CardHeaderIcon" android:src="@drawable/ic_alarm" />
+                    <TextView
+                        style="@style/CardHeaderText"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="@string/alarms_title" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/alarm_add_btn"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/add"
+                        app:icon="@drawable/ic_add" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/alarms_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="vertical" />
+
+                <TextView
+                    android:id="@+id/alarms_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="8dp"
+                    android:text="@string/alarms_empty"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
