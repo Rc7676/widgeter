@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Android 12+ : real frosted-glass blur behind dialogs and pickers. -->
+    <style name="ThemeOverlay.Widgeter.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:windowBlurBehindEnabled">true</item>
+        <item name="android:windowBlurBehindRadius">56dp</item>
+        <item name="android:backgroundDimAmount">0.15</item>
+    </style>
+
+</resources>

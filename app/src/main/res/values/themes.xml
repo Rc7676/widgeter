@@ -26,7 +26,13 @@
         <item name="textAppearanceTitleLarge">@style/Type.Title.Large</item>
         <item name="textAppearanceTitleMedium">@style/Type.Title.Medium</item>
         <item name="textAppearanceTitleSmall">@style/Type.Title.Small</item>
+
+        <!-- Dialogs use a themed overlay that adds real background blur on API 31+. -->
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Widgeter.Dialog</item>
     </style>
+
+    <!-- Base dialog overlay (no blur); values-v31 adds real blur-behind. -->
+    <style name="ThemeOverlay.Widgeter.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog" />
 
     <!-- Purple (default) -->
     <style name="Theme.Widgeter" parent="Theme.Widgeter.Base">
