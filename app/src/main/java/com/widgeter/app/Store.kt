@@ -752,6 +752,40 @@ object Store {
         am.cancel(timerAlarmIntent(c))
     }
 
+    // ===================== Quote of the day =====================
+    fun quoteIndex(c: Context): Int {
+        val stored = prefs(c).getInt("quote_idx", -1)
+        return if (stored in Quotes.list.indices) stored
+        else LocalDate.now().dayOfYear % Quotes.list.size
+    }
+
+    fun shuffleQuote(c: Context) {
+        prefs(c).edit().putInt("quote_idx", (0 until Quotes.list.size).random()).apply()
+    }
+
+    // ===================== Random / decision =====================
+    fun randomMode(c: Context): Int = prefs(c).getInt("rnd_mode", 1) // 0 coin, 1 d6, 2 d20, 3 percent
+
+    fun cycleRandomMode(c: Context) {
+        prefs(c).edit().putInt("rnd_mode", (randomMode(c) + 1) % 4).putString("rnd_res", "?").apply()
+    }
+
+    fun randomResult(c: Context): String = prefs(c).getString("rnd_res", "?") ?: "?"
+
+    fun randomModeLabel(c: Context): String = when (randomMode(c)) {
+        0 -> "Coin"; 2 -> "d20"; 3 -> "0–100"; else -> "d6"
+    }
+
+    fun rollRandom(c: Context) {
+        val r = when (randomMode(c)) {
+            0 -> if ((0..1).random() == 0) "Heads" else "Tails"
+            2 -> (1..20).random().toString()
+            3 -> (0..100).random().toString()
+            else -> (1..6).random().toString()
+        }
+        prefs(c).edit().putString("rnd_res", r).apply()
+    }
+
     // ---- Per-item color accents ----
     val itemColorRes = intArrayOf(
         R.color.item_c1, R.color.item_c2, R.color.item_c3,
@@ -934,7 +968,7 @@ object Widgets {
             NotesWidget::class.java, CounterWidget::class.java, ClockWidget::class.java,
             TodoWidget::class.java, HabitWidget::class.java, WaterWidget::class.java,
             CountdownWidget::class.java, StopwatchWidget::class.java, TimerWidget::class.java,
-            CalendarWidget::class.java
+            CalendarWidget::class.java, QuoteWidget::class.java, RandomWidget::class.java
         )
         for (cls in providers) {
             val ids = mgr.getAppWidgetIds(ComponentName(context, cls))

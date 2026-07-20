@@ -32,7 +32,9 @@ class WidgetGalleryActivity : AppCompatActivity() {
         WidgetInfo(CountdownWidget::class.java, R.string.countdown_title, R.string.widget_desc_countdown),
         WidgetInfo(StopwatchWidget::class.java, R.string.stopwatch_title, R.string.widget_desc_stopwatch),
         WidgetInfo(TimerWidget::class.java, R.string.timer_title, R.string.widget_desc_timer),
-        WidgetInfo(CalendarWidget::class.java, R.string.calendar_title, R.string.widget_desc_calendar)
+        WidgetInfo(CalendarWidget::class.java, R.string.calendar_title, R.string.widget_desc_calendar),
+        WidgetInfo(QuoteWidget::class.java, R.string.quote_title, R.string.widget_desc_quote),
+        WidgetInfo(RandomWidget::class.java, R.string.random_title, R.string.widget_desc_random)
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

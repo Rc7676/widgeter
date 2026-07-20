@@ -187,6 +187,13 @@
     <string name="calendar_title">Calendar</string>
     <string name="widget_desc_calendar">A month calendar with today marked</string>
 
+    <!-- Quote & Random widgets -->
+    <string name="quote_title">Quote</string>
+    <string name="random_title">Random</string>
+    <string name="random_hint">tap the number to roll</string>
+    <string name="widget_desc_quote">A quote you can shuffle</string>
+    <string name="widget_desc_random">Coin flip, dice or a number</string>
+
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>
     <string name="widget_desc_notes">A quick note on your home screen</string>
