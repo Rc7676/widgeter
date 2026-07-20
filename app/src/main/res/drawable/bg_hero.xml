@@ -6,5 +6,5 @@
         android:centerColor="?attr/heroGradMid"
         android:endColor="?attr/heroGradEnd"
         android:angle="135" />
-    <corners android:radius="30dp" />
+    <corners android:radius="34dp" />
 </shape>

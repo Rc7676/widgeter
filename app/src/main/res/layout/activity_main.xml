@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:title="@string/app_name"
+        app:titleTextAppearance="@style/Type.Title.Large"
         app:titleTextColor="?attr/colorOnSurface" />
 
     <FrameLayout
