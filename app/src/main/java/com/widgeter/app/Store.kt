@@ -866,6 +866,48 @@ object Store {
     fun worldZoneId(c: Context): String = worldZones[worldClockIndex(c)].second
     fun worldCity(c: Context): String = worldZones[worldClockIndex(c)].first
 
+    // ===================== Progress (year / month / week / day) =====================
+    /** 0 = year, 1 = month, 2 = week, 3 = day. */
+    fun progressScope(c: Context): Int = prefs(c).getInt("prog_scope", 0).coerceIn(0, 3)
+
+    fun cycleProgressScope(c: Context) {
+        prefs(c).edit().putInt("prog_scope", (progressScope(c) + 1) % 4).apply()
+    }
+
+    fun progressScopeLabel(c: Context): String = when (progressScope(c)) {
+        1 -> "Month"; 2 -> "Week"; 3 -> "Day"; else -> "Year"
+    }
+
+    /** Fraction 0..100 of the current scope that has elapsed. */
+    fun progressPercent(c: Context): Int {
+        val zone = java.time.ZoneId.systemDefault()
+        val now = java.time.ZonedDateTime.now(zone)
+        val start: java.time.ZonedDateTime
+        val end: java.time.ZonedDateTime
+        when (progressScope(c)) {
+            1 -> { // month
+                start = now.toLocalDate().withDayOfMonth(1).atStartOfDay(zone)
+                end = start.plusMonths(1)
+            }
+            2 -> { // week (Monday start)
+                val monday = now.toLocalDate().with(java.time.DayOfWeek.MONDAY)
+                start = monday.atStartOfDay(zone)
+                end = start.plusWeeks(1)
+            }
+            3 -> { // day
+                start = now.toLocalDate().atStartOfDay(zone)
+                end = start.plusDays(1)
+            }
+            else -> { // year
+                start = java.time.LocalDate.of(now.year, 1, 1).atStartOfDay(zone)
+                end = start.plusYears(1)
+            }
+        }
+        val total = java.time.Duration.between(start, end).seconds.coerceAtLeast(1)
+        val done = java.time.Duration.between(start, now).seconds.coerceIn(0, total)
+        return (done * 100 / total).toInt()
+    }
+
     // ---- Per-item color accents ----
     val itemColorRes = intArrayOf(
         R.color.item_c1, R.color.item_c2, R.color.item_c3,
@@ -1049,7 +1091,8 @@ object Widgets {
             TodoWidget::class.java, HabitWidget::class.java, WaterWidget::class.java,
             CountdownWidget::class.java, StopwatchWidget::class.java, TimerWidget::class.java,
             CalendarWidget::class.java, QuoteWidget::class.java, RandomWidget::class.java,
-            BatteryWidget::class.java, WorldClockWidget::class.java, PomodoroWidget::class.java
+            BatteryWidget::class.java, WorldClockWidget::class.java, PomodoroWidget::class.java,
+            ProgressWidget::class.java
         )
         for (cls in providers) {
             val ids = mgr.getAppWidgetIds(ComponentName(context, cls))

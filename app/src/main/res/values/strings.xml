@@ -212,6 +212,10 @@
     <string name="pomodoro_skip">Skip to next phase</string>
     <string name="widget_desc_pomodoro">Focus timer with work &amp; break cycles</string>
 
+    <!-- Progress widget -->
+    <string name="progress_title">Progress</string>
+    <string name="widget_desc_progress">Percent of the year, month, week or day</string>
+
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>
     <string name="widget_desc_notes">A quick note on your home screen</string>
