@@ -82,6 +82,88 @@
         <item name="android:textSize">11sp</item>
     </style>
 
+    <!-- Timer preset chip — compact so "10m"/"25m" never wrap -->
+    <style name="TimerChip" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <!-- Compact gradient page header (non-home pages) -->
+    <style name="PageHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">12dp</item>
+        <item name="android:background">@drawable/bg_header</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingHorizontal">18dp</item>
+        <item name="android:paddingVertical">16dp</item>
+        <item name="android:elevation">6dp</item>
+    </style>
+
+    <style name="PageHeaderTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:textColor">?attr/heroOn</item>
+    </style>
+
+    <style name="PageHeaderSub">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:alpha">0.9</item>
+        <item name="android:textColor">?attr/heroOn</item>
+    </style>
+
+    <style name="HeaderBadge">
+        <item name="android:layout_width">46dp</item>
+        <item name="android:layout_height">46dp</item>
+        <item name="android:background">@drawable/bg_header_badge</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?attr/heroOn</item>
+    </style>
+
+    <!-- Designed empty states -->
+    <style name="EmptyIcon">
+        <item name="android:layout_width">92dp</item>
+        <item name="android:layout_height">92dp</item>
+        <item name="android:background">@drawable/bg_icon_tile</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">40sp</item>
+    </style>
+
+    <style name="EmptyTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:fontFamily">@font/sora_family</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="EmptySub">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:lineSpacingMultiplier">1.3</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
     <style name="TonalIconButton">
         <item name="android:layout_width">52dp</item>
         <item name="android:layout_height">52dp</item>

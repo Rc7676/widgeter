@@ -88,6 +88,9 @@
     <string name="more_title">More</string>
     <string name="notes_empty_page">No notes yet. Tap + to add one.</string>
     <string name="counters_empty_page">No counters yet. Tap + to add one.</string>
+    <string name="counters_header_sub">Track anything, tap to count</string>
+    <string name="counters_empty_title">Nothing to count yet</string>
+    <string name="counters_empty_sub">Coffees, push-ups, glasses of water — make a counter and tap it anywhere.</string>
     <string name="new_note">New note</string>
     <string name="new_counter">New counter</string>
     <string name="note_empty_preview">(empty)</string>

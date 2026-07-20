@@ -291,6 +291,7 @@ class MainActivity : AppCompatActivity() {
         countersAdapter.submit(list)
         findViewById<View>(R.id.counters_empty).visibility =
             if (list.isEmpty()) View.VISIBLE else View.GONE
+        findViewById<TextView>(R.id.counters_header_count).text = list.size.toString()
     }
 
     private fun deleteCounterWithUndo(entry: CounterEntry) {
