@@ -7,6 +7,7 @@
     android:orientation="vertical">
 
     <TextView
+        android:fontFamily="@font/manrope_family"
         android:id="@+id/qa_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,6 +43,7 @@
                 android:contentDescription="@string/sc_note_short" />
 
             <TextView
+        android:fontFamily="@font/manrope_family"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -68,6 +70,7 @@
                 android:contentDescription="@string/sc_task_short" />
 
             <TextView
+        android:fontFamily="@font/manrope_family"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -94,6 +97,7 @@
                 android:contentDescription="@string/new_counter" />
 
             <TextView
+        android:fontFamily="@font/manrope_family"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"

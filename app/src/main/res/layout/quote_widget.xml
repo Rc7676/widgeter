@@ -7,6 +7,7 @@
     android:orientation="vertical">
 
     <TextView
+        android:fontFamily="@font/manrope_family"
         android:id="@+id/quote_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,6 +19,7 @@
         android:textAllCaps="true" />
 
     <TextView
+        android:fontFamily="@font/manrope_family"
         android:id="@+id/quote_text"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -30,6 +32,7 @@
         android:lineSpacingMultiplier="1.1" />
 
     <TextView
+        android:fontFamily="@font/manrope_family"
         android:id="@+id/quote_author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

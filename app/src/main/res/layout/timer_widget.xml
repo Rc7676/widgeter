@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
     <TextView
+        android:fontFamily="@font/manrope_family"
         android:id="@+id/t_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,6 +18,7 @@
         android:textAllCaps="true" />
 
     <Chronometer
+        android:fontFamily="@font/sora_family"
         android:id="@+id/t_chrono"
         android:layout_width="match_parent"
         android:layout_height="0dp"

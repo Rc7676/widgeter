@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
     <TextView
+        android:fontFamily="@font/manrope_family"
         android:id="@+id/water_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,6 +35,7 @@
             android:contentDescription="@string/cd_remove" />
 
         <TextView
+        android:fontFamily="@font/sora_family"
             android:id="@+id/water_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

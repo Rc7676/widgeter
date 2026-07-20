@@ -14,6 +14,7 @@
         android:orientation="horizontal">
 
         <TextView
+        android:fontFamily="@font/sora_family"
             android:id="@+id/day_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -31,6 +32,7 @@
             android:orientation="vertical">
 
             <TextView
+        android:fontFamily="@font/manrope_family"
                 android:id="@+id/day_weekday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,6 +44,7 @@
                 android:textStyle="bold" />
 
             <TextView
+        android:fontFamily="@font/manrope_family"
                 android:id="@+id/day_month"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -54,6 +57,7 @@
     </LinearLayout>
 
     <TextView
+        android:fontFamily="@font/manrope_family"
         android:id="@+id/day_week"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,6 +70,7 @@
         android:textStyle="bold" />
 
     <TextView
+        android:fontFamily="@font/manrope_family"
         android:id="@+id/day_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

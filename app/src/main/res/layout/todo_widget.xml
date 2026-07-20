@@ -12,6 +12,7 @@
         android:gravity="center_vertical">
 
         <TextView
+        android:fontFamily="@font/manrope_family"
         android:id="@+id/todo_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -24,6 +25,7 @@
             android:textAllCaps="true" />
 
         <TextView
+        android:fontFamily="@font/manrope_family"
             android:id="@+id/todo_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,6 +55,7 @@
         android:dividerHeight="0dp" />
 
     <TextView
+        android:fontFamily="@font/manrope_family"
         android:id="@+id/todo_empty"
         android:layout_width="match_parent"
         android:layout_height="0dp"
