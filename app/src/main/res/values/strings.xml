@@ -239,6 +239,11 @@
     <string name="analog_title">Analog clock</string>
     <string name="widget_desc_analog">A classic ticking analog clock</string>
 
+    <!-- Savings goal widget -->
+    <string name="goal_title">Goal</string>
+    <string name="goal_target_fmt">/ %1$d</string>
+    <string name="widget_desc_goal">Save toward a target with a progress bar</string>
+
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>
     <string name="widget_desc_notes">A quick note on your home screen</string>

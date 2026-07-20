@@ -878,6 +878,29 @@ object Store {
     fun worldZoneId(c: Context): String = worldZones[worldClockIndex(c)].second
     fun worldCity(c: Context): String = worldZones[worldClockIndex(c)].first
 
+    // ===================== Savings goal =====================
+    val goalTargets = intArrayOf(500, 1000, 2500, 5000)
+    private const val GOAL_STEP = 25
+
+    fun goalCurrent(c: Context): Int = prefs(c).getInt("goal_cur", 0)
+    fun goalTargetIndex(c: Context): Int = prefs(c).getInt("goal_tgt_idx", 1).coerceIn(0, goalTargets.size - 1)
+    fun goalTarget(c: Context): Int = goalTargets[goalTargetIndex(c)]
+    fun goalStep(c: Context): Int = GOAL_STEP
+
+    fun goalPercent(c: Context): Int {
+        val t = goalTarget(c)
+        return if (t <= 0) 0 else (goalCurrent(c) * 100 / t).coerceIn(0, 100)
+    }
+
+    fun bumpGoal(c: Context, delta: Int) {
+        val next = (goalCurrent(c) + delta).coerceAtLeast(0)
+        prefs(c).edit().putInt("goal_cur", next).apply()
+    }
+
+    fun cycleGoalTarget(c: Context) {
+        prefs(c).edit().putInt("goal_tgt_idx", (goalTargetIndex(c) + 1) % goalTargets.size).apply()
+    }
+
     // ===================== Moon phase =====================
     private const val SYNODIC_MONTH = 29.53058867
     // Reference new moon: 2000-01-06 18:14 UTC.
@@ -1138,7 +1161,7 @@ object Widgets {
             CalendarWidget::class.java, QuoteWidget::class.java, RandomWidget::class.java,
             BatteryWidget::class.java, WorldClockWidget::class.java, PomodoroWidget::class.java,
             ProgressWidget::class.java, MoonWidget::class.java, DayInfoWidget::class.java,
-            AnalogClockWidget::class.java
+            AnalogClockWidget::class.java, GoalWidget::class.java
         )
         for (cls in providers) {
             val ids = mgr.getAppWidgetIds(ComponentName(context, cls))
