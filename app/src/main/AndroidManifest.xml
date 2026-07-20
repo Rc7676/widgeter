@@ -279,6 +279,18 @@
                 android:resource="@xml/moon_widget_info" />
         </receiver>
 
+        <!-- Day info widget -->
+        <receiver
+            android:name=".DayInfoWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/dayinfo_widget_info" />
+        </receiver>
+
         <!-- Alarm firing + boot reschedule -->
         <receiver
             android:name=".AlarmReceiver"

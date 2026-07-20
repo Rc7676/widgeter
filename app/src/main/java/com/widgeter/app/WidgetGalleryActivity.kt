@@ -39,7 +39,8 @@ class WidgetGalleryActivity : AppCompatActivity() {
         WidgetInfo(WorldClockWidget::class.java, R.string.worldclock_title, R.string.widget_desc_worldclock),
         WidgetInfo(PomodoroWidget::class.java, R.string.pomodoro_title, R.string.widget_desc_pomodoro),
         WidgetInfo(ProgressWidget::class.java, R.string.progress_title, R.string.widget_desc_progress),
-        WidgetInfo(MoonWidget::class.java, R.string.moon_title, R.string.widget_desc_moon)
+        WidgetInfo(MoonWidget::class.java, R.string.moon_title, R.string.widget_desc_moon),
+        WidgetInfo(DayInfoWidget::class.java, R.string.dayinfo_title, R.string.widget_desc_dayinfo)
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

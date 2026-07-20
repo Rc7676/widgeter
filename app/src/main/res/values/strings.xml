@@ -221,6 +221,12 @@
     <string name="moon_illum_fmt">%1$d%% illuminated</string>
     <string name="widget_desc_moon">Tonight\'s moon phase</string>
 
+    <!-- Day info widget -->
+    <string name="dayinfo_title">Day info</string>
+    <string name="dayinfo_week_fmt">Week %1$d of the year</string>
+    <string name="dayinfo_detail_fmt">Day %1$d of %2$d · %3$d days left</string>
+    <string name="widget_desc_dayinfo">Week number, day of year and days left</string>
+
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>
     <string name="widget_desc_notes">A quick note on your home screen</string>
