@@ -753,13 +753,25 @@ object Store {
     }
 
     // ===================== Pomodoro =====================
-    const val POMO_FOCUS_MS = 25 * 60_000L
-    const val POMO_BREAK_MS = 5 * 60_000L
+    /** Configurable focus / break lengths in minutes (defaults 25 / 5). */
+    fun pomoFocusMin(c: Context): Int = prefs(c).getInt("pomo_focus_min", 25)
+    fun pomoBreakMin(c: Context): Int = prefs(c).getInt("pomo_break_min", 5)
+
+    fun setPomoFocusMin(c: Context, min: Int) {
+        prefs(c).edit().putInt("pomo_focus_min", min.coerceAtLeast(1)).apply()
+        if (!pomoRunning(c) && !pomoOnBreak(c)) resetPomo(c)
+    }
+
+    fun setPomoBreakMin(c: Context, min: Int) {
+        prefs(c).edit().putInt("pomo_break_min", min.coerceAtLeast(1)).apply()
+        if (!pomoRunning(c) && pomoOnBreak(c)) resetPomo(c)
+    }
 
     /** 0 = focus, 1 = break. */
     fun pomoPhase(c: Context): Int = prefs(c).getInt("pomo_phase", 0)
     fun pomoOnBreak(c: Context): Boolean = pomoPhase(c) == 1
-    fun pomoDuration(c: Context): Long = if (pomoOnBreak(c)) POMO_BREAK_MS else POMO_FOCUS_MS
+    fun pomoDuration(c: Context): Long =
+        (if (pomoOnBreak(c)) pomoBreakMin(c) else pomoFocusMin(c)) * 60_000L
     fun pomoRunning(c: Context): Boolean = prefs(c).getBoolean("pomo_running", false)
     fun pomoCount(c: Context): Int = prefs(c).getInt("pomo_count", 0)
     fun pomoPhaseLabel(c: Context): String = if (pomoOnBreak(c)) "Break" else "Focus"

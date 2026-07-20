@@ -44,6 +44,14 @@
     <string name="settings_theme">Appearance</string>
     <string name="settings_color">Accent color</string>
     <string name="settings_data">Backup &amp; restore</string>
+    <string name="settings_widgets">Widget preferences</string>
+    <string name="pref_pomo_focus">Pomodoro focus length</string>
+    <string name="pref_pomo_break">Pomodoro break length</string>
+    <string name="pref_min_5">5m</string>
+    <string name="pref_min_10">10m</string>
+    <string name="pref_min_15">15m</string>
+    <string name="pref_min_25">25m</string>
+    <string name="pref_min_50">50m</string>
     <string name="data_export">Export</string>
     <string name="data_import">Import</string>
     <string name="data_exported">Backup saved</string>

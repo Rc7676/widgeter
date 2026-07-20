@@ -49,7 +49,48 @@ class SettingsActivity : AppCompatActivity() {
 
         setupAppearance()
         setupColors()
+        setupWidgetPrefs()
         setupData()
+    }
+
+    private fun setupWidgetPrefs() {
+        val focus = findViewById<com.google.android.material.button.MaterialButtonToggleGroup>(R.id.pomo_focus_group)
+        focus.check(
+            when (Store.pomoFocusMin(this)) {
+                15 -> R.id.focus_15
+                50 -> R.id.focus_50
+                else -> R.id.focus_25
+            }
+        )
+        focus.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            val min = when (checkedId) {
+                R.id.focus_15 -> 15
+                R.id.focus_50 -> 50
+                else -> 25
+            }
+            Store.setPomoFocusMin(this, min)
+            Widgets.refreshEverything(this)
+        }
+
+        val brk = findViewById<com.google.android.material.button.MaterialButtonToggleGroup>(R.id.pomo_break_group)
+        brk.check(
+            when (Store.pomoBreakMin(this)) {
+                10 -> R.id.break_10
+                15 -> R.id.break_15
+                else -> R.id.break_5
+            }
+        )
+        brk.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            val min = when (checkedId) {
+                R.id.break_10 -> 10
+                R.id.break_15 -> 15
+                else -> 5
+            }
+            Store.setPomoBreakMin(this, min)
+            Widgets.refreshEverything(this)
+        }
     }
 
     private fun setupData() {
