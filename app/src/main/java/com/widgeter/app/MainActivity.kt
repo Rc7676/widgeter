@@ -375,8 +375,12 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.todo_empty).visibility = if (has) View.GONE else View.VISIBLE
         val done = list.count { it.done }
         val progress = findViewById<TextView>(R.id.todo_progress)
-        progress.visibility = if (has) View.VISIBLE else View.GONE
-        progress.text = getString(R.string.todo_progress_fmt, done, list.size)
+        progress.text = if (has) getString(R.string.todo_progress_fmt, done, list.size)
+        else getString(R.string.tasks_header_sub)
+        val pct = if (list.isNotEmpty()) done * 100 / list.size else 0
+        findViewById<com.google.android.material.progressindicator.CircularProgressIndicator>(R.id.tasks_ring)
+            .setProgressCompat(pct, true)
+        findViewById<TextView>(R.id.tasks_ring_pct).text = "$pct%"
         findViewById<View>(R.id.btn_clear_completed).visibility = if (done > 0) View.VISIBLE else View.GONE
     }
 
