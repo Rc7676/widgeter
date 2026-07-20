@@ -216,6 +216,11 @@
     <string name="progress_title">Progress</string>
     <string name="widget_desc_progress">Percent of the year, month, week or day</string>
 
+    <!-- Moon phase widget -->
+    <string name="moon_title">Moon</string>
+    <string name="moon_illum_fmt">%1$d%% illuminated</string>
+    <string name="widget_desc_moon">Tonight\'s moon phase</string>
+
     <!-- Widget picker descriptions -->
     <string name="widget_desc_clock">Time, date and a friendly greeting</string>
     <string name="widget_desc_notes">A quick note on your home screen</string>

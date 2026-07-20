@@ -866,6 +866,39 @@ object Store {
     fun worldZoneId(c: Context): String = worldZones[worldClockIndex(c)].second
     fun worldCity(c: Context): String = worldZones[worldClockIndex(c)].first
 
+    // ===================== Moon phase =====================
+    private const val SYNODIC_MONTH = 29.53058867
+    // Reference new moon: 2000-01-06 18:14 UTC.
+    private const val REF_NEW_MOON_MS = 947182440000L
+
+    /** Age of the moon in the current cycle, 0..SYNODIC_MONTH days. */
+    private fun moonAgeDays(): Double {
+        val days = (System.currentTimeMillis() - REF_NEW_MOON_MS) / 86_400_000.0
+        val age = days % SYNODIC_MONTH
+        return if (age < 0) age + SYNODIC_MONTH else age
+    }
+
+    /** 0 = new, 1 = waxing crescent … 4 = full … 7 = waning crescent. */
+    fun moonPhaseIndex(): Int {
+        val frac = moonAgeDays() / SYNODIC_MONTH
+        return (Math.round(frac * 8).toInt()) % 8
+    }
+
+    fun moonEmoji(): String = when (moonPhaseIndex()) {
+        0 -> "🌑"; 1 -> "🌒"; 2 -> "🌓"; 3 -> "🌔"; 4 -> "🌕"; 5 -> "🌖"; 6 -> "🌗"; else -> "🌘"
+    }
+
+    fun moonName(): String = when (moonPhaseIndex()) {
+        0 -> "New moon"; 1 -> "Waxing crescent"; 2 -> "First quarter"; 3 -> "Waxing gibbous"
+        4 -> "Full moon"; 5 -> "Waning gibbous"; 6 -> "Last quarter"; else -> "Waning crescent"
+    }
+
+    /** Illuminated fraction of the disc, 0..100. */
+    fun moonIllumination(): Int {
+        val frac = moonAgeDays() / SYNODIC_MONTH
+        return Math.round((1 - Math.cos(2 * Math.PI * frac)) / 2 * 100).toInt()
+    }
+
     // ===================== Progress (year / month / week / day) =====================
     /** 0 = year, 1 = month, 2 = week, 3 = day. */
     fun progressScope(c: Context): Int = prefs(c).getInt("prog_scope", 0).coerceIn(0, 3)
@@ -1092,7 +1125,7 @@ object Widgets {
             CountdownWidget::class.java, StopwatchWidget::class.java, TimerWidget::class.java,
             CalendarWidget::class.java, QuoteWidget::class.java, RandomWidget::class.java,
             BatteryWidget::class.java, WorldClockWidget::class.java, PomodoroWidget::class.java,
-            ProgressWidget::class.java
+            ProgressWidget::class.java, MoonWidget::class.java
         )
         for (cls in providers) {
             val ids = mgr.getAppWidgetIds(ComponentName(context, cls))
