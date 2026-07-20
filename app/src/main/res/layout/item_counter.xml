@@ -5,8 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
-    app:cardCornerRadius="18dp"
-    app:cardElevation="1dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:strokeColor="@color/card_stroke"
+    app:strokeWidth="1dp"
     app:cardBackgroundColor="?attr/colorSurface">
 
     <LinearLayout
@@ -35,6 +37,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Counter"
+                android:fontFamily="@font/sora_family"
+                android:letterSpacing="-0.01"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -82,6 +86,8 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="0"
+                android:fontFamily="@font/sora_family"
+                android:letterSpacing="-0.02"
                 android:textColor="?attr/colorPrimary"
                 android:textSize="32sp"
                 android:textStyle="bold" />
