@@ -92,6 +92,20 @@
         <item name="heroTile">@color/yellow_hero_tile</item>
     </style>
 
+    <!-- Sunset (orange → coral → violet) -->
+    <style name="Theme.Widgeter.Sunset" parent="Theme.Widgeter.Base">
+        <item name="colorPrimary">@color/sunset_primary</item>
+        <item name="colorOnPrimary">@color/sunset_on_primary</item>
+        <item name="colorPrimaryContainer">@color/sunset_container</item>
+        <item name="colorOnPrimaryContainer">@color/sunset_on_container</item>
+        <item name="colorSecondary">@color/sunset_primary</item>
+        <item name="colorSecondaryContainer">@color/sunset_container</item>
+        <item name="colorOnSecondaryContainer">@color/sunset_on_container</item>
+        <item name="heroGradStart">@color/sunset_grad_start</item>
+        <item name="heroGradMid">@color/sunset_grad_mid</item>
+        <item name="heroGradEnd">@color/sunset_grad_end</item>
+    </style>
+
     <!-- Black (monochrome) -->
     <style name="Theme.Widgeter.Black" parent="Theme.Widgeter.Base">
         <item name="colorPrimary">@color/black_primary</item>

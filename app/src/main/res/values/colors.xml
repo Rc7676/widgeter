@@ -58,6 +58,14 @@
     <color name="yellow_grad_end">#C98A00</color>
     <color name="yellow_hero_on">#241A00</color>
     <color name="yellow_hero_tile">#26000000</color>
+    <!-- Sunset (orange → coral → violet) -->
+    <color name="sunset_primary">#F0426E</color>
+    <color name="sunset_on_primary">#FFFFFF</color>
+    <color name="sunset_container">#FFD9E1</color>
+    <color name="sunset_on_container">#48001A</color>
+    <color name="sunset_grad_start">#FF9A5A</color>
+    <color name="sunset_grad_mid">#FF5C7C</color>
+    <color name="sunset_grad_end">#B44AE0</color>
     <!-- Black (monochrome) -->
     <color name="black_primary">#1F1F24</color>
     <color name="black_on_primary">#FFFFFF</color>

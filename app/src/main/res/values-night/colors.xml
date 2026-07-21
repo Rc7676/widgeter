@@ -37,6 +37,11 @@
     <color name="black_container">#2F2F34</color>
     <color name="black_on_container">#E3E2E6</color>
 
+    <color name="sunset_primary">#FFB1C1</color>
+    <color name="sunset_on_primary">#5E0021</color>
+    <color name="sunset_container">#8A123C</color>
+    <color name="sunset_on_container">#FFD9E1</color>
+
     <!-- Widget palette (night) -->
     <color name="widget_card">#221F26</color>
     <color name="widget_on_card">#E6E1E5</color>

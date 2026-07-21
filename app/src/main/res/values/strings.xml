@@ -66,6 +66,7 @@
         <item>Blue</item>
         <item>Yellow</item>
         <item>Black</item>
+        <item>Sunset</item>
     </string-array>
     <string name="theme_system">Follow system</string>
     <string name="theme_light">Light</string>
