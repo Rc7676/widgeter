@@ -158,17 +158,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun openSettings() = startActivity(Intent(this, SettingsActivity::class.java))
 
+    /** Toggles a page, fading it in when it first becomes visible. */
+    private fun setPageVisible(id: Int, visible: Boolean) {
+        val v = findViewById<View>(id)
+        if (visible) {
+            if (v.visibility != View.VISIBLE) {
+                v.alpha = 0f
+                v.visibility = View.VISIBLE
+                v.animate().alpha(1f).setDuration(220).start()
+            }
+        } else if (v.visibility != View.GONE) {
+            v.animate().cancel()
+            v.alpha = 1f
+            v.visibility = View.GONE
+        }
+    }
+
     private fun showPage(itemId: Int) {
-        findViewById<View>(R.id.page_notes_root).visibility =
-            if (itemId == R.id.nav_notes) View.VISIBLE else View.GONE
-        findViewById<View>(R.id.page_counters_root).visibility =
-            if (itemId == R.id.nav_counters) View.VISIBLE else View.GONE
-        findViewById<View>(R.id.page_tasks_root).visibility =
-            if (itemId == R.id.nav_tasks) View.VISIBLE else View.GONE
-        findViewById<View>(R.id.page_clock_root).visibility =
-            if (itemId == R.id.nav_clock) View.VISIBLE else View.GONE
-        findViewById<View>(R.id.page_more_root).visibility =
-            if (itemId == R.id.nav_more) View.VISIBLE else View.GONE
+        setPageVisible(R.id.page_notes_root, itemId == R.id.nav_notes)
+        setPageVisible(R.id.page_counters_root, itemId == R.id.nav_counters)
+        setPageVisible(R.id.page_tasks_root, itemId == R.id.nav_tasks)
+        setPageVisible(R.id.page_clock_root, itemId == R.id.nav_clock)
+        setPageVisible(R.id.page_more_root, itemId == R.id.nav_more)
 
         toolbar.title = when (itemId) {
             R.id.nav_counters -> getString(R.string.section_counter)
@@ -222,10 +233,22 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.hero_greeting).text = greeting()
         findViewById<TextView>(R.id.hero_date).text = LocalDate.now().format(heroDateFmt)
-        findViewById<TextView>(R.id.stat_notes).text = list.size.toString()
-        findViewById<TextView>(R.id.stat_counters).text = Store.getCounterList(this).size.toString()
-        findViewById<TextView>(R.id.stat_tasks).text = Store.getTodos(this).count { !it.done }.toString()
-        findViewById<TextView>(R.id.stat_streak).text = Store.topHabitStreak(this).toString()
+        countUp(findViewById(R.id.stat_notes), list.size)
+        countUp(findViewById(R.id.stat_counters), Store.getCounterList(this).size)
+        countUp(findViewById(R.id.stat_tasks), Store.getTodos(this).count { !it.done })
+        countUp(findViewById(R.id.stat_streak), Store.topHabitStreak(this))
+    }
+
+    /** Animates a stat number from its current value up to [target]. */
+    private fun countUp(tv: TextView, target: Int) {
+        val current = tv.text.toString().toIntOrNull() ?: 0
+        if (current == target) { tv.text = target.toString(); return }
+        android.animation.ValueAnimator.ofInt(current, target).apply {
+            duration = 480
+            interpolator = android.view.animation.DecelerateInterpolator()
+            addUpdateListener { tv.text = (it.animatedValue as Int).toString() }
+            start()
+        }
     }
 
     private fun greeting(): String = when (LocalTime.now().hour) {
@@ -700,7 +723,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshHeroStreak() {
-        findViewById<TextView>(R.id.stat_streak).text = Store.topHabitStreak(this).toString()
+        countUp(findViewById(R.id.stat_streak), Store.topHabitStreak(this))
     }
 
     // ---- Countdowns ----
